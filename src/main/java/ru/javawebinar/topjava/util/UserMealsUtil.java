@@ -3,11 +3,13 @@ package ru.javawebinar.topjava.util;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExceed;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
+import static java.util.stream.Collectors.*;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -24,8 +26,29 @@ public class UserMealsUtil {
 //        .toLocalTime();
     }
 
-    public static List<UserMealWithExceed>  getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO return filtered list with correctly exceeded field
-        return null;
+    public static List<UserMealWithExceed> getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime,
+                                                                   LocalTime endTime, int caloriesPerDay) {
+
+        if (mealList == null || mealList.size() == 0) {
+            return new ArrayList<>();
+        }
+
+
+        Map<LocalDate, Integer> caloriesToDateMap = mealList.stream()
+//                .sorted(comparing(UserMeal::getDateTime))
+                .collect(groupingBy(m -> m.getDateTime().toLocalDate(),
+                        summingInt(UserMeal::getCalories)));
+
+        return mealList.stream()
+                .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime))
+                .map(m -> {
+                    final LocalDateTime localDateTime = m.getDateTime();
+                    final int caloriesSum = caloriesToDateMap.get(localDateTime.toLocalDate());
+                    final boolean exceeded = caloriesSum > caloriesPerDay;
+                    return new UserMealWithExceed(localDateTime,
+                            m.getDescription(),
+                            m.getCalories(),
+                            exceeded);
+                }).collect(toList());
     }
 }
