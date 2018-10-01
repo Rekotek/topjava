@@ -158,4 +158,63 @@ public class UserMealsUtilTest {
         assertEquals(NEW_YEAR_STR, meals.get(0).getDescription());
         assertTrue(meals.get(0).isExceed());
     }
+
+    @Test
+    public void findExactlyTwoMealsWithNoExceededOldSchool() {
+        List<UserMealWithExceed> meals = UserMealsUtil.getFilteredWithExceededOldSchool(mealList,
+                LocalTime.of(9, 59), LocalTime.of(10, 1), 10000);
+        assertEquals(2, meals.size());
+        assertEquals(30, meals.get(0).getDateTime().getDayOfMonth());
+        assertEquals(31, meals.get(1).getDateTime().getDayOfMonth());
+        for (UserMealWithExceed meal : meals) {
+            assertFalse(meal.isExceed());
+            assertEquals(2015, meal.getDateTime().getYear());
+            assertEquals(Month.MAY, meal.getDateTime().getMonth());
+            assertEquals("Завтрак", meal.getDescription());
+            assertEquals(10, meal.getDateTime().getHour());
+            assertEquals(0, meal.getDateTime().getMinute());
+        }
+        meals.forEach(System.out::println);
+    }
+
+    @Test
+    public void findAllFromBigDataOldSchool() {
+        List<UserMeal> mealList = generateBigData();
+
+        List<UserMealWithExceed> meals = UserMealsUtil.getFilteredWithExceededOldSchool(mealList,
+                LocalTime.of(0, 0), LocalTime.of(23, 59), 1000);
+
+        assertEquals(mealList.size(), meals.size());
+
+        assertTrue(meals.get(0).isExceed());
+        assertTrue(meals.get(1).isExceed());
+        assertTrue(meals.get(2).isExceed());
+        assertTrue(meals.get(3).isExceed());
+
+        assertFalse(meals.get(4).isExceed());
+
+        assertEquals(mealList.get(1).getDateTime(), meals.get(1).getDateTime());
+        assertEquals(mealList.get(1).getDescription(), meals.get(1).getDescription());
+        assertEquals(mealList.get(1).getCalories(), meals.get(1).getCalories());
+        assertEquals(mealList.get(2).getDateTime(), meals.get(2).getDateTime());
+        assertEquals(mealList.get(3).getDateTime(), meals.get(3).getDateTime());
+
+        assertEquals(mealList.get(100).getDateTime(), meals.get(100).getDateTime());
+        assertEquals(mealList.get(100).getDescription(), meals.get(100).getDescription());
+        assertEquals(mealList.get(100).getCalories(), meals.get(100).getCalories());
+        assertFalse(meals.get(100).isExceed());
+    }
+
+
+    @Test
+    public void findOnlyOneFromBigDataOldSchool() {
+        List<UserMeal> mealList = generateBigData();
+
+        List<UserMealWithExceed> meals = UserMealsUtil.getFilteredWithExceededOldSchool(mealList,
+                LocalTime.of(0, 0), LocalTime.of(0, 2), 1000);
+
+        assertEquals(1, meals.size());
+        assertEquals(NEW_YEAR_STR, meals.get(0).getDescription());
+        assertTrue(meals.get(0).isExceed());
+    }
 }
