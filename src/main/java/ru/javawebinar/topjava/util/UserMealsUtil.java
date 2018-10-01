@@ -33,9 +33,7 @@ public class UserMealsUtil {
             return new ArrayList<>();
         }
 
-
         Map<LocalDate, Integer> caloriesToDateMap = mealList.stream()
-//                .sorted(comparing(UserMeal::getDateTime))
                 .collect(groupingBy(m -> m.getDateTime().toLocalDate(),
                         summingInt(UserMeal::getCalories)));
 

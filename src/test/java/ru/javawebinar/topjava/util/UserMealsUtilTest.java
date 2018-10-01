@@ -35,18 +35,6 @@ public class UserMealsUtilTest {
             new UserMeal(LocalDateTime.of(2015, Month.JUNE, 3, 20, 0), "Ужин", 330)
     );
 
-    private void flashUserMeal() {
-        UserMeal.setCaloriesCount(0);
-        UserMeal.setDescCount(0);
-        UserMeal.setLocalDateCount(0);
-    }
-
-    @Before
-    public void setUp() {
-        System.out.println("----");
-        flashUserMeal();
-    }
-
     @Test
     public void shouldReturnEmptyListFromEmptySource() {
         List<UserMealWithExceed> meals = UserMealsUtil.getFilteredWithExceeded(new ArrayList<>(),
@@ -61,8 +49,6 @@ public class UserMealsUtilTest {
                 LocalTime.of(0, 0), LocalTime.of(0, 1), 1000);
         assertNotNull(meals);
         assertEquals(0, meals.size());
-
-        printUserMealStaticFields();
     }
 
     @Test
@@ -100,7 +86,6 @@ public class UserMealsUtilTest {
         }
 
         meals.forEach(System.out::println);
-        printUserMealStaticFields();
     }
 
     @Test
@@ -109,14 +94,6 @@ public class UserMealsUtilTest {
                 LocalTime.of(0, 0), LocalTime.of(23, 59), 1000);
 
         assertEquals(mealList.size(), meals.size());
-
-        printUserMealStaticFields();
-    }
-
-    private void printUserMealStaticFields() {
-        System.out.println("Calories count: " + UserMeal.getCaloriesCount());
-        System.out.println("DateTime count: " + UserMeal.getLocalDateCount());
-        System.out.println("Description count: " + UserMeal.getDescCount());
     }
 
     private List<UserMeal> generateBigData() {
@@ -168,8 +145,6 @@ public class UserMealsUtilTest {
         assertEquals(mealList.get(100).getDescription(), meals.get(100).getDescription());
         assertEquals(mealList.get(100).getCalories(), meals.get(100).getCalories());
         assertFalse(meals.get(100).isExceed());
-
-        printUserMealStaticFields();
     }
 
     @Test
@@ -182,7 +157,5 @@ public class UserMealsUtilTest {
         assertEquals(1, meals.size());
         assertEquals(NEW_YEAR_STR, meals.get(0).getDescription());
         assertTrue(meals.get(0).isExceed());
-
-        printUserMealStaticFields();
     }
 }
