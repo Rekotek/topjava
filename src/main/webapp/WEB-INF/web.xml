@@ -26,4 +26,22 @@
         <url-pattern>/meals</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>mealDeleteServlet</servlet-name>
+        <servlet-class>ru.javawebinar.topjava.web.MealDeleteServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mealDeleteServlet</servlet-name>
+        <url-pattern>/meals/delete</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>cyrillicFilter</filter-name>
+        <filter-class>ru.javawebinar.topjava.web.filter.CyrillicFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>cyrillicFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>

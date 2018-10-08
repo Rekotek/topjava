@@ -12,11 +12,19 @@ h2 {
 
 }
 
+.error {
+    padding: 20px;
+    margin-right: 20%;
+    background-color: lightgrey;
+    text-align: left;
+    color: darkred;
+}
+
 form label {
     font-size: 0.9em;
 }
 
-form input {
+.calories {
     font-size: 1.1em;
     padding-left: 5px;
     size: 6ch;
@@ -31,9 +39,12 @@ form button {
 table {
     alignment: left;
     margin: 20px;
-    border-top-width: 2px;
+    border-collapse: collapse;
 }
 
+table, th, td {
+    border: 1px solid black;
+}
 table tr.even { background: lightgray; }
 
 table tr.odd { background: white; }
