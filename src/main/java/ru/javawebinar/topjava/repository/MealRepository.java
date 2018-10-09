@@ -9,11 +9,13 @@ import java.util.List;
  */
 
 public interface MealRepository {
-    Meal add(Meal meal);
+    void insert(Meal meal);
 
-    Meal update(Meal meal);
+    void update(Meal meal);
 
     void delete(int meal_id);
+
+    void deleteAll();
 
     List<Meal> findAll();
 
