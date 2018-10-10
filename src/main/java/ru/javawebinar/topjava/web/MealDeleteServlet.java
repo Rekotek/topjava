@@ -33,11 +33,11 @@ public class MealDeleteServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String mealServletPath = req.getContextPath() + "/meals";
-        String meal_id = req.getParameter("meal_id");
+        final String MEAL_SERVLET_PATH = req.getContextPath() + "/meals";
+        final String meal_id = req.getParameter("id");
         if (meal_id == null) {
             log.error("meal_id must exist");
-            resp.sendRedirect(mealServletPath +
+            resp.sendRedirect(MEAL_SERVLET_PATH +
                     "?error=" +
                     URLEncoder.encode(ERROR_MEAL_ID_DOES_NOT_EXIST, "UTF-8"));
             return;
@@ -46,10 +46,10 @@ public class MealDeleteServlet extends HttpServlet {
             log.debug("Deleting meal with id = {}", meal_id);
             int id = Integer.parseInt(meal_id);
             mealRepository.delete(id);
-            resp.sendRedirect(mealServletPath);
+            resp.sendRedirect(MEAL_SERVLET_PATH);
         } catch (NumberFormatException e) {
             log.error("meal_id must be integer");
-            resp.sendRedirect(mealServletPath +
+            resp.sendRedirect(MEAL_SERVLET_PATH +
                     "?error=" +
                     URLEncoder.encode(ERROR_MEAL_ID_MUST_BE_INT, "UTF-8"));
         }

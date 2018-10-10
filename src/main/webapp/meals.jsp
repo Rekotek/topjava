@@ -5,6 +5,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html lang="ru">
 <head>
     <link href="<c:url value="/resources/css/main.css" />" rel="stylesheet">
@@ -38,18 +39,21 @@
         <tr style="color: ${meal.exceed ? "red" : "black"}"
             class="${loop.index % 2 == 0 ? 'even' : 'odd'}"
             valign="middle">
-            <td>${meal.formattedDateTime}</td>
+            <td>
+                <fmt:parseDate value="${meal.dateTime}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDate" type="both" />
+                <fmt:formatDate value="${parsedDate}" pattern="yyyy-MM-dd HH:mm" />
+            </td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
             <td>
-                <form method="post" action="meals/edit">
-                    <input type="hidden" name="meal_id" value="${meal.id}">
+                <form method="get" action="meals/update">
+                    <input type="hidden" name="id" value="${meal.id}">
                     <input type="submit" name="edit" value="Редактировать"/>
                 </form>
             </td>
             <td>
                 <form method="post" action="meals/delete">
-                    <input type="hidden" name="meal_id" value="${meal.id}">
+                    <input type="hidden" name="id" value="${meal.id}">
                     <input type="submit" name="delete" value="Удалить"/>
                 </form>
             </td>

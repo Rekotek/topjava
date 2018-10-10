@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.model;
 
-import ru.javawebinar.topjava.util.TimeUtil;
-
 import java.time.LocalDateTime;
 
 public class MealWithExceed {
@@ -29,10 +27,6 @@ public class MealWithExceed {
 
     public LocalDateTime getDateTime() {
         return dateTime;
-    }
-
-    public String getFormattedDateTime() {
-        return this.dateTime.format(TimeUtil.SIMPLE_FORMAT);
     }
 
     public String getDescription() {

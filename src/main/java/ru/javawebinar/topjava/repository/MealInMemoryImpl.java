@@ -4,10 +4,7 @@ import org.slf4j.Logger;
 import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,6 +26,14 @@ public class MealInMemoryImpl implements MealRepository {
     }
 
     @Override
+    public Meal findById(int id) {
+        Meal mealInDB = mealStore.get(id);
+        Meal meal = new Meal(mealInDB.getDateTime(), mealInDB.getDescription(), mealInDB.getCalories());
+        meal.setId(mealInDB.getId());
+        return meal;
+    }
+
+    @Override
     public int count() {
         return mealStore.size();
     }
@@ -42,15 +47,18 @@ public class MealInMemoryImpl implements MealRepository {
     }
 
     @Override
-    public void update(Meal meal) {
+    public void update(Meal meal) throws NoSuchElementException {
         Integer id = meal.getId();
+        if (!mealStore.containsKey(id)) {
+            throw new NoSuchElementException();
+        }
         mealStore.replace(id, meal);
     }
 
     @Override
-    public void delete(int meal_id) {
-        log.debug("Delete Meal with ID = {}", meal_id);
-        mealStore.remove(meal_id);
+    public void delete(int id) {
+        log.debug("Delete Meal with ID = {}", id);
+        mealStore.remove(id);
     }
 
     @Override
