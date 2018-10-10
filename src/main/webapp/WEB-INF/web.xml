@@ -26,25 +26,6 @@
         <url-pattern>/meals</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>mealDeleteServlet</servlet-name>
-        <servlet-class>ru.javawebinar.topjava.web.MealDeleteServlet</servlet-class>
-        <load-on-startup>0</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>mealDeleteServlet</servlet-name>
-        <url-pattern>/meals/delete</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>mealUpdateServlet</servlet-name>
-        <servlet-class>ru.javawebinar.topjava.web.MealUpdateServlet</servlet-class>
-        <load-on-startup>0</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>mealUpdateServlet</servlet-name>
-        <url-pattern>/meals/update</url-pattern>
-    </servlet-mapping>
-
     <filter>
         <filter-name>cyrillicFilter</filter-name>
         <filter-class>ru.javawebinar.topjava.web.filter.CyrillicFilter</filter-class>

@@ -24,7 +24,7 @@ public class MealRepositoryTest {
     private static final String DESCRIPTION_2 = "Завтрак";
     private static final int CALORIES_2 = 100;
 
-    private MealRepository mealRepository = new MealInMemoryImpl();
+    private MealRepository mealRepository = MealInMemoryRepoImpl.getInstance();
 
     @Before
     public void setUp() {
@@ -108,7 +108,7 @@ public class MealRepositoryTest {
     public void deleteWithMultiThreading() throws InterruptedException, ExecutionException, TimeoutException {
         final int AFFECTED_RECORD_COUNT = 20;
 
-        MealInMemoryImpl.setUpTestData(mealRepository);
+        MealInMemoryRepoImpl.setUpTestData(mealRepository);
         int oldCount = mealRepository.count();
 
         new ForkJoinPool(10).submit(() ->
@@ -127,7 +127,7 @@ public class MealRepositoryTest {
         final LocalDateTime INITIAL_DATE_TIME = LocalDateTime.of(2001, 1, 1, 20, 20);
         final int CALORIES = 8000;
 
-        MealInMemoryImpl.setUpTestData(mealRepository);
+        MealInMemoryRepoImpl.setUpTestData(mealRepository);
         int oldCount = mealRepository.count();
 
         new ForkJoinPool(10).submit(() ->

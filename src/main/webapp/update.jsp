@@ -16,6 +16,7 @@
         <fieldset>
             <legend>Обновление записи №${meal.id}</legend>
             <input type="hidden" name="id" value="${meal.id}" >
+            <input type="hidden" name="action" value="update" >
             <p><label class="field" for="date_time">Дата и время:</label>
                <input type="datetime-local" name="date_time" value="${meal.dateTime}">
             </p>

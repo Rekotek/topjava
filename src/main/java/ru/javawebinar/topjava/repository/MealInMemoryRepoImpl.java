@@ -14,11 +14,19 @@ import static org.slf4j.LoggerFactory.getLogger;
  * Created by taras on 2018-10-08.
  */
 
-public class MealInMemoryImpl implements MealRepository {
-    private static final Logger log = getLogger(MealInMemoryImpl.class);
+public class MealInMemoryRepoImpl implements MealRepository {
+    private static final Logger log = getLogger(MealInMemoryRepoImpl.class);
+    private static final MealRepository INSTANCE = new MealInMemoryRepoImpl();
 
-    private static AtomicInteger id = new AtomicInteger(0);
-    private static Map<Integer, Meal> mealStore = new ConcurrentHashMap<>();
+    private AtomicInteger idGenerator = new AtomicInteger(0);
+    private Map<Integer, Meal> mealStore = new ConcurrentHashMap<>();
+
+    public static MealRepository getInstance() {
+        return INSTANCE;
+    }
+
+    private MealInMemoryRepoImpl() {
+    }
 
     @Override
     public List<Meal> findAll() {
@@ -40,7 +48,7 @@ public class MealInMemoryImpl implements MealRepository {
 
     @Override
     public void insert(Meal meal) {
-        Integer newId = id.incrementAndGet();
+        Integer newId = idGenerator.incrementAndGet();
         meal.setId(newId);
         log.debug("New Atomic ID = {}", newId);
         mealStore.put(newId, meal);
@@ -48,11 +56,7 @@ public class MealInMemoryImpl implements MealRepository {
 
     @Override
     public void update(Meal meal) throws NoSuchElementException {
-        Integer id = meal.getId();
-        if (!mealStore.containsKey(id)) {
-            throw new NoSuchElementException();
-        }
-        mealStore.replace(id, meal);
+        mealStore.replace(meal.getId(), meal);
     }
 
     @Override
@@ -64,12 +68,7 @@ public class MealInMemoryImpl implements MealRepository {
     @Override
     public void deleteAll() {
         mealStore.clear();
-        id.set(0);
-    }
-
-
-    private static LocalDateTime calculateNewTime(LocalDateTime mealTime, Random random) {
-        return mealTime.plusMinutes(8 * 60 + random.nextInt(10) - 5);
+        idGenerator.set(0);
     }
 
     public static void setUpTestData(MealRepository mealRepository) {
@@ -88,5 +87,9 @@ public class MealInMemoryImpl implements MealRepository {
             Meal breakfastMeal = new Meal(mealTime, "Завтрак", 100);
             mealRepository.insert(breakfastMeal);
         }
+    }
+
+    private static LocalDateTime calculateNewTime(LocalDateTime mealTime, Random random) {
+        return mealTime.plusMinutes(8 * 60 + random.nextInt(10) - 5);
     }
 }

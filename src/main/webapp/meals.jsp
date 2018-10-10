@@ -17,11 +17,11 @@
 </c:if>
 <h2>Список съеденного</h2>
 <p><em>Всего записей: ${countMeals}</em></p>
-<form>
-    <label for="calories">Граничное значение калорий:</label>
-    <input id="calories" class="calories" name="calories" type="number" value="${caloriesPerDay}" autofocus>
-    <button type="submit">Показать</button>
-</form>
+<%--<form>--%>
+    <%--<label for="calories">Граничное значение калорий:</label>--%>
+    <%--<input id="calories" class="calories" name="calories" type="number" value="${caloriesPerDay}" autofocus>--%>
+    <%--<button type="submit">Показать</button>--%>
+<%--</form>--%>
 <table width="60%">
     <col width="20%"/>
     <col width="40%"/>
@@ -46,14 +46,16 @@
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
             <td>
-                <form method="get" action="meals/update">
+                <form method="get">
                     <input type="hidden" name="id" value="${meal.id}">
-                    <input type="submit" name="edit" value="Редактировать"/>
+                    <input type="hidden" name="action" value="edit">
+                    <input type="submit" value="Редактировать"/>
                 </form>
             </td>
             <td>
-                <form method="post" action="meals/delete">
+                <form method="post">
                     <input type="hidden" name="id" value="${meal.id}">
+                    <input type="hidden" name="action" value="delete">
                     <input type="submit" name="delete" value="Удалить"/>
                 </form>
             </td>
@@ -62,7 +64,6 @@
 </table>
 
 <hr>
-Вернуться <a href=" index.html
-            ">назад.</a>
+Вернуться <a href="index.html">назад.</a>
 </body>
 </html>
