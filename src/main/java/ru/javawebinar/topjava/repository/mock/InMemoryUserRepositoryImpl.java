@@ -8,8 +8,8 @@ import ru.javawebinar.topjava.model.AbstractNamedEntity;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.UserUtil;
+import ru.javawebinar.topjava.util.exception.DuplicatedEmailException;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +38,13 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public User save(User user) {
         log.info("save {}", user);
+        boolean eMailIsPresent = repository.values().stream()
+                .anyMatch(u -> user.getEmail().equals(u.getEmail()));
+
+        if (eMailIsPresent) {
+            throw new DuplicatedEmailException("Duplicated email: " + user.getEmail());
+        }
+
         if (user.isNew()) {
             user.setId(counter.incrementAndGet());
             repository.put(user.getId(), user);

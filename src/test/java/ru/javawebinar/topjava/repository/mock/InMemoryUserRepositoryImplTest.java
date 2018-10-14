@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.repository.mock;
 import org.junit.Test;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
+import ru.javawebinar.topjava.util.exception.DuplicatedEmailException;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class InMemoryUserRepositoryImplTest {
         User newUser = new User(null, "ЧудовChudov...", "zxcxz@zxcx.com", "111", ROLE_USER);
         userRepository.save(newUser);
         User user = userRepository.getByEmail(newUser.getEmail());
-        assertEquals(newUser.getEmail(), user.getName());
+        assertEquals(newUser.getEmail(), user.getEmail());
     }
 
     @Test
@@ -44,5 +45,22 @@ public class InMemoryUserRepositoryImplTest {
         List<User> usersBefore = userRepository.getAll();
         boolean deletedFlag = userRepository.delete(usersBefore.size() + 10000);
         assertFalse(deletedFlag);
+    }
+
+    @Test(expected = DuplicatedEmailException.class)
+    public void noDuplicatedEmailAllowedInNewUser() {
+        List<User> users = userRepository.getAll();
+        String usedEmail = users.get(0).getEmail();
+        User newUser = new User(null, "NO Allowing this", usedEmail, "123", ROLE_USER);
+        userRepository.save(newUser);
+    }
+
+    @Test(expected = DuplicatedEmailException.class)
+    public void noDuplicatedEmailAllowedWhenUpdateUser() {
+        List<User> users = userRepository.getAll();
+        String usedEmail = users.get(0).getEmail();
+        User updatedUser = users.get(1);
+        updatedUser.setEmail(usedEmail);
+        userRepository.save(updatedUser);
     }
 }
