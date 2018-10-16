@@ -1,8 +1,10 @@
 package ru.javawebinar.topjava.repository.mock;
 
+import org.junit.Before;
 import org.junit.Test;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
+import ru.javawebinar.topjava.util.UserUtil;
 import ru.javawebinar.topjava.util.exception.DuplicatedEmailException;
 
 import java.util.List;
@@ -15,12 +17,20 @@ import static ru.javawebinar.topjava.model.Role.ROLE_USER;
  */
 
 public class InMemoryUserRepositoryImplTest {
-    private static final UserRepository userRepository = new InMemoryUserRepositoryImpl();
+    private UserRepository userRepository;
+
+    @Before
+    public void setUp() {
+        //Cleaning up IDs within static fields
+        UserUtil.USERS.forEach(u -> u.setId(null));
+        userRepository = new InMemoryUserRepositoryImpl();
+    }
 
     @Test
     public void getAll() {
         List<User> users = userRepository.getAll();
         users.forEach(System.out::println);
+        assertEquals(UserUtil.USERS.size(), users.size());
     }
 
     @Test
@@ -50,6 +60,8 @@ public class InMemoryUserRepositoryImplTest {
     @Test(expected = DuplicatedEmailException.class)
     public void noDuplicatedEmailAllowedInNewUser() {
         List<User> users = userRepository.getAll();
+        assertNotNull(users);
+        System.out.println(users.size());
         String usedEmail = users.get(0).getEmail();
         User newUser = new User(null, "NO Allowing this", usedEmail, "123", ROLE_USER);
         userRepository.save(newUser);
