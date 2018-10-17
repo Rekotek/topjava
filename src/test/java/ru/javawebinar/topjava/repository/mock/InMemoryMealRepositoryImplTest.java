@@ -95,4 +95,32 @@ public class InMemoryMealRepositoryImplTest {
         assertFalse(deleted);
         assertEquals(MEALS.size(), mealRepository.getAll(1).size());
     }
+
+    @Test
+    public void findBetweenDateFromUnknownUser() {
+        Collection<Meal> meals = mealRepository.findByDaysBetween(MEALS.get(0).getDate(),
+                MEALS.get(MEALS.size() - 1).getDate(),
+                1000);
+        assertNotNull(meals);
+        assertEquals(0, meals.size());
+    }
+
+    @Test
+    public void findBetweenDateWithinInterval() {
+        Collection<Meal> meals = mealRepository.findByDaysBetween(MEALS.get(0).getDate(),
+                MEALS.get(MEALS.size() - 1).getDate(),
+                1);
+        assertNotNull(meals);
+        assertEquals(MEALS.size(), meals.size());
+        assertEquals(MEALS.get(MEALS.size() - 1), meals.stream().findFirst().get());
+    }
+
+    @Test
+    public void findBetweenDateHalfPeriod() {
+        Collection<Meal> meals = mealRepository.findByDaysBetween(MEALS.get(3).getDate(),
+                MEALS.get(MEALS.size() - 1).getDate(),
+                1);
+        assertNotNull(meals);
+        assertEquals(3, meals.size());
+    }
 }

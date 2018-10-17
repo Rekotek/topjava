@@ -7,12 +7,14 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
+import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenDate;
 
 @Repository
 public class InMemoryMealRepositoryImpl implements MealRepository {
@@ -84,6 +86,17 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         if (checkUserIdNotPresent(userId)) return Collections.emptyList();
         Map<Integer, Meal> mealMap = repository.get(userId);
         return mealMap.values().stream()
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Meal> findByDaysBetween(LocalDate startDate, LocalDate endDate, int userId) {
+        log.info("Method findByDaysBetween() with userId = {}", userId);
+        if (checkUserIdNotPresent(userId)) return Collections.emptyList();
+        Map<Integer, Meal> mealMap = repository.get(userId);
+        return mealMap.values().stream()
+                .filter(m -> isBetweenDate(m.getDateTime().toLocalDate(), startDate, endDate))
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
