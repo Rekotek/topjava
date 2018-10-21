@@ -6,8 +6,6 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
@@ -21,10 +19,10 @@ import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
+//        "classpath:spring/spring-db.xml"
 })
 @RunWith(SpringRunner.class)
-@Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
+//@Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class UserServiceTest {
 
     static {
@@ -34,61 +32,61 @@ public class UserServiceTest {
     }
 
     @Autowired
-    private UserService service;
+    private UserService userService;
 
     @Test
-    public void create() throws Exception {
+    public void create() {
         User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
-        User created = service.create(newUser);
+        User created = userService.create(newUser);
         newUser.setId(created.getId());
-        assertMatch(service.getAll(), ADMIN, newUser, USER);
+        assertMatch(userService.getAll(), ADMIN, newUser, USER);
     }
 
     @Test(expected = DataAccessException.class)
-    public void duplicateMailCreate() throws Exception {
-        service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER));
+    public void duplicateMailCreate() {
+        userService.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER));
     }
 
     @Test
-    public void delete() throws Exception {
-        service.delete(USER_ID);
-        assertMatch(service.getAll(), ADMIN);
+    public void delete() {
+        userService.delete(USER_ID);
+        assertMatch(userService.getAll(), ADMIN);
     }
 
     @Test(expected = NotFoundException.class)
-    public void deletedNotFound() throws Exception {
-        service.delete(1);
+    public void deletedNotFound() {
+        userService.delete(1);
     }
 
     @Test
-    public void get() throws Exception {
-        User user = service.get(USER_ID);
+    public void get() {
+        User user = userService.get(USER_ID);
         assertMatch(user, USER);
     }
 
     @Test(expected = NotFoundException.class)
-    public void getNotFound() throws Exception {
-        service.get(1);
+    public void getNotFound() {
+        userService.get(1);
     }
 
     @Test
-    public void getByEmail() throws Exception {
-        User user = service.getByEmail("user@yandex.ru");
+    public void getByEmail() {
+        User user = userService.getByEmail("user@yandex.ru");
         assertMatch(user, USER);
     }
 
     @Test
-    public void update() throws Exception {
+    public void update() {
         User updated = new User(USER);
         updated.setName("UpdatedName");
         updated.setCaloriesPerDay(330);
-        service.update(updated);
-        assertMatch(service.get(USER_ID), updated);
+        userService.update(updated);
+        assertMatch(userService.get(USER_ID), updated);
     }
 
     @Test
-    public void getAll() throws Exception {
-        List<User> all = service.getAll();
+    public void getAll() {
+        List<User> all = userService.getAll();
         assertMatch(all, ADMIN, USER);
     }
 }

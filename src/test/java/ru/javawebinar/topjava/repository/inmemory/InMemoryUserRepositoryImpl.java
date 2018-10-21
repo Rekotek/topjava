@@ -1,10 +1,13 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
+import javax.annotation.PostConstruct;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -12,15 +15,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static ru.javawebinar.topjava.UserTestData.ADMIN;
 import static ru.javawebinar.topjava.UserTestData.USER;
 
 @Repository
+@Scope(SCOPE_PROTOTYPE)
 public class InMemoryUserRepositoryImpl implements UserRepository {
 
     private Map<Integer, User> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(100);
 
+    @PostConstruct
     public void init() {
         repository.clear();
         repository.put(UserTestData.USER_ID, USER);
@@ -30,6 +36,10 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public User save(User user) {
         if (user.isNew()) {
+            if (repository.values().stream()
+                    .anyMatch(u -> user.getEmail().equals(u.getEmail())))
+                throw new DuplicateKeyException("Duplicating of email is not allowed: " + user.getEmail());
+
             user.setId(counter.incrementAndGet());
             repository.put(user.getId(), user);
             return user;
