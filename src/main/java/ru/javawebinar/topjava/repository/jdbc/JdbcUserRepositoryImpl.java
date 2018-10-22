@@ -51,7 +51,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         } else if (namedParameterJdbcTemplate.update(
                 "UPDATE users SET name=:name, email=:email, password=:password, " +
                         "registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay " +
-                        "WHERE id = :id AND user_id = :user_id", map) == 0) {
+                        "WHERE id = :id", map) == 0) {
             return null;
         }
         return user;
@@ -70,7 +70,6 @@ public class JdbcUserRepositoryImpl implements UserRepository {
 
     @Override
     public User getByEmail(String email) {
-//        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         return DataAccessUtils.singleResult(users);
     }

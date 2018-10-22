@@ -17,8 +17,11 @@ import java.util.Collection;
 
 import static ru.javawebinar.topjava.UserTestData.ADMIN;
 
-@ContextConfiguration("classpath:spring/spring-app.xml")
 @RunWith(SpringRunner.class)
+@ContextConfiguration({
+        "classpath:spring/spring-app.xml",
+        "classpath:spring/spring-inmemory.xml"
+})
 public class InMemoryAdminRestControllerSpringTest {
 
     @Autowired
@@ -28,12 +31,12 @@ public class InMemoryAdminRestControllerSpringTest {
     private InMemoryUserRepositoryImpl repository;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         repository.init();
     }
 
     @Test
-    public void delete() throws Exception {
+    public void delete() {
         controller.delete(UserTestData.USER_ID);
         Collection<User> users = controller.getAll();
         Assert.assertEquals(users.size(), 1);
@@ -41,7 +44,7 @@ public class InMemoryAdminRestControllerSpringTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void deleteNotFound() throws Exception {
+    public void deleteNotFound() {
         controller.delete(10);
     }
 }
