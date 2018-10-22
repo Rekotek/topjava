@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static ru.javawebinar.topjava.MealTestData.*;
 
 /**
@@ -27,13 +28,16 @@ import static ru.javawebinar.topjava.MealTestData.*;
 })
 @Sql(scripts = {"classpath:db/populateDB.sql"}, config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+    private static final int NEW_CALORIES = 100500;
+    private static final String NEW_DESCRIPTION = "Новое описание";
+    private static final LocalDateTime NEW_DATE_TIME = LocalDateTime.of(2200, 12, 2, 21, 34);
 
     @Autowired
     private MealService mealService;
 
     @Test
-    public void getAllFromUnknownUser() {
-        List<Meal> meals = mealService.getAll(USER_UNKNOWN);
+    public void getAllFromOtherUser() {
+        List<Meal> meals = mealService.getAll(ADMIN_ID);
         assertEquals(0, meals.size());
     }
 
@@ -42,92 +46,68 @@ public class MealServiceTest {
         List<Meal> meals = mealService.getAll(USER_ID);
         assertEquals(MEAL_TEST_DATA_SIZE, meals.size());
         int lastIndex = meals.size() - 1;
-        assertEquals(MEAL_30_1.getDescription(), meals.get(lastIndex).getDescription());
-        assertEquals(MEAL_30_1.getDateTime(), meals.get(lastIndex).getDateTime());
-        assertEquals(MEAL_30_1.getCalories(), meals.get(lastIndex).getCalories());
-        assertEquals(MEAL_30_2.getDescription(), meals.get(lastIndex - 1).getDescription());
-        assertEquals(MEAL_30_2.getDateTime(), meals.get(lastIndex - 1).getDateTime());
-        assertEquals(MEAL_30_2.getCalories(), meals.get(lastIndex - 1).getCalories());
-        assertEquals(MEAL_31_2.getDescription(), meals.get(1).getDescription());
-        assertEquals(MEAL_31_2.getDateTime(), meals.get(1).getDateTime());
-        assertEquals(MEAL_31_2.getCalories(), meals.get(1).getCalories());
-        assertEquals(MEAL_31_3.getDescription(), meals.get(0).getDescription());
-        assertEquals(MEAL_31_3.getDateTime(), meals.get(0).getDateTime());
-        assertEquals(MEAL_31_3.getCalories(), meals.get(0).getCalories());
+        assertThat(meals.get(lastIndex)).isEqualToComparingFieldByField(MEAL_30_1);
+        assertThat(meals.get(lastIndex - 1)).isEqualToComparingFieldByField(MEAL_30_2);
+        assertThat(meals.get(1)).isEqualToComparingFieldByField(MEAL_31_2);
+        assertThat(meals.get(0)).isEqualToComparingFieldByField(MEAL_31_3);
     }
 
     @Test(expected = NotFoundException.class)
-    public void getOneMealFromUnknownUser() {
-        mealService.get(MEAL_30_1.getId(), USER_UNKNOWN);
+    public void getOneFromOtherUser() {
+        mealService.get(MEAL_30_1.getId(), ADMIN_ID);
     }
 
     @Test
-    public void getOneMealFromRegularUser() {
+    public void getOneFromRegularUser() {
         Meal meal = mealService.get(MEAL_30_1.getId(), USER_ID);
-        assertEquals(MEAL_30_1.getCalories(), meal.getCalories());
-        assertEquals(MEAL_30_1.getDateTime(), meal.getDateTime());
-        assertEquals(MEAL_30_1.getDescription(), meal.getDescription());
+        assertThat(meal).isEqualToComparingFieldByField(MEAL_30_1);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void deleteFromOtherUser() {
+        mealService.delete(MEAL_31_1.getId(), ADMIN_ID);
     }
 
     @Test
-    public void getOneMoreMealFromRegularUser() {
-        Meal meal = mealService.get(MEAL_31_2.getId(), USER_ID);
-        assertEquals(MEAL_31_2.getCalories(), meal.getCalories());
-        assertEquals(MEAL_31_2.getDateTime(), meal.getDateTime());
-        assertEquals(MEAL_31_2.getDescription(), meal.getDescription());
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void deleteFromUnknownUser() {
-        mealService.delete(MEAL_31_1.getId(), USER_UNKNOWN);
-    }
-
-    @Test(expected = NotFoundException.class)
     public void deleteFromRegularUser() {
+        int oldSize = mealService.getAll(USER_ID).size();
         mealService.delete(MEAL_30_3.getId(), USER_ID);
-        Meal meal = mealService.get(MEAL_30_3.getId(), USER_ID);
-        assertNull(meal);
+        List<Meal> meals = mealService.getAll(USER_ID);
+        assertFalse(meals.contains(MEAL_30_3));
+        assertEquals(meals.size(), oldSize - 1);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void updateFromUnknownUser() {
-        final int NEW_CALORIES = 100500;
-        final String NEW_DESCRIPTION = "Новое описание";
-        final LocalDateTime NEW_DATE_TIME = LocalDateTime.of(2200, 12, 2, 21, 34);
-
+    private Meal getAndUpdateMeal() {
         Meal meal = mealService.get(MEAL_30_3.getId(), USER_ID);
         meal.setCalories(NEW_CALORIES);
         meal.setDescription(NEW_DESCRIPTION);
         meal.setDateTime(NEW_DATE_TIME);
-        mealService.update(meal, USER_UNKNOWN);
+        return meal;
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void updateFromOtherUser() {
+        Meal meal = getAndUpdateMeal();
+        mealService.update(meal, ADMIN_ID);
     }
 
     @Test
     public void updateFromRegularUser() {
-        final int NEW_CALORIES = 100500;
-        final String NEW_DESCRIPTION = "Новое описание";
-        final LocalDateTime NEW_DATE_TIME = LocalDateTime.of(2200, 12, 2, 21, 34);
-
-        Meal meal = mealService.get(MEAL_30_3.getId(), USER_ID);
-        meal.setCalories(NEW_CALORIES);
-        meal.setDescription(NEW_DESCRIPTION);
-        meal.setDateTime(NEW_DATE_TIME);
+        Meal meal = getAndUpdateMeal();
         mealService.update(meal, USER_ID);
 
         Meal mealNew = mealService.get(MEAL_30_3.getId(), USER_ID);
-        assertNotNull(mealNew);
         assertEquals(NEW_CALORIES, mealNew.getCalories());
         assertEquals(NEW_DESCRIPTION, mealNew.getDescription());
         assertEquals(NEW_DATE_TIME, mealNew.getDateTime());
     }
 
     @Test
-    public void filterDatesOutOfBoundFromUnknownUser() {
+    public void filterDatesOutOfBoundFromOtherUser() {
         List<Meal> meals = mealService.getBetweenDates(
                 MEAL_31_3.getDate().plusYears(100),
                 MEAL_31_3.getDate().plusYears(101),
-                USER_UNKNOWN);
-        assertNotNull(meals);
+                ADMIN_ID);
         assertEquals(0, meals.size());
     }
 
@@ -137,17 +117,15 @@ public class MealServiceTest {
                 MEAL_31_3.getDate().plusYears(100),
                 MEAL_31_3.getDate().plusYears(101),
                 USER_ID);
-        assertNotNull(meals);
         assertEquals(0, meals.size());
     }
 
     @Test
-    public void filterDatesInBoundFromUnknownUser() {
+    public void filterDatesInBoundFromOtherUser() {
         List<Meal> meals = mealService.getBetweenDates(
                 MEAL_30_1.getDate(),
                 MEAL_31_3.getDate(),
-                USER_UNKNOWN);
-        assertNotNull(meals);
+                ADMIN_ID);
         assertEquals(0, meals.size());
     }
 
@@ -157,15 +135,10 @@ public class MealServiceTest {
                 MEAL_30_1.getDate(),
                 MEAL_31_3.getDate(),
                 USER_ID);
-        assertNotNull(meals);
         assertEquals(MEAL_TEST_DATA_SIZE, meals.size());
         int lastIndex = meals.size() - 1;
-        assertEquals(MEAL_30_1.getDescription(), meals.get(lastIndex).getDescription());
-        assertEquals(MEAL_30_1.getDateTime(), meals.get(lastIndex).getDateTime());
-        assertEquals(MEAL_30_1.getCalories(), meals.get(lastIndex).getCalories());
-        assertEquals(MEAL_31_3.getDescription(), meals.get(0).getDescription());
-        assertEquals(MEAL_31_3.getDateTime(), meals.get(0).getDateTime());
-        assertEquals(MEAL_31_3.getCalories(), meals.get(0).getCalories());
+        assertThat(meals.get(lastIndex)).isEqualToComparingFieldByField(MEAL_30_1);
+        assertThat(meals.get(0)).isEqualToComparingFieldByField(MEAL_31_3);
     }
 
     @Test
@@ -174,24 +147,19 @@ public class MealServiceTest {
                 MEAL_30_1.getDate(),
                 MEAL_30_3.getDate(),
                 USER_ID);
-        assertNotNull(meals);
         assertEquals(3, meals.size());
         int lastIndex = meals.size() - 1;
-        assertEquals(MEAL_30_1.getDescription(), meals.get(lastIndex).getDescription());
-        assertEquals(MEAL_30_1.getDateTime(), meals.get(lastIndex).getDateTime());
-        assertEquals(MEAL_30_1.getCalories(), meals.get(lastIndex).getCalories());
-        assertEquals(MEAL_30_3.getDescription(), meals.get(0).getDescription());
-        assertEquals(MEAL_30_3.getDateTime(), meals.get(0).getDateTime());
+        assertThat(meals.get(lastIndex)).isEqualToComparingFieldByField(MEAL_30_1);
+        assertThat(meals.get(0)).isEqualToComparingFieldByField(MEAL_30_3);
         assertEquals(MEAL_30_3.getCalories(), meals.get(0).getCalories());
     }
 
     @Test
-    public void filterTimeOutOfBoundFromUnknownUser() {
+    public void filterTimeOutOfBoundFromOtherUser() {
         List<Meal> meals = mealService.getBetweenDateTimes(
                 MEAL_31_3.getDateTime().plusYears(1).plusDays(100),
                 MEAL_31_3.getDateTime().plusYears(1).plusDays(100).plusHours(10),
-                USER_UNKNOWN);
-        assertNotNull(meals);
+                ADMIN_ID);
         assertEquals(0, meals.size());
     }
 
@@ -201,39 +169,37 @@ public class MealServiceTest {
                 MEAL_31_3.getDateTime().plusYears(1).plusDays(100),
                 MEAL_31_3.getDateTime().plusYears(1).plusDays(100).plusHours(10),
                 USER_ID);
-        assertNotNull(meals);
         assertEquals(0, meals.size());
     }
 
     @Test
-    public void filterTimeInBoundFromUnknownUser() {
+    public void filterTimeInBoundFromOtherUser() {
         List<Meal> meals = mealService.getBetweenDateTimes(
                 MEAL_30_1.getDateTime().minusMinutes(20),
                 MEAL_31_1.getDateTime().plusMinutes(40),
-                USER_UNKNOWN);
-        assertNotNull(meals);
+                ADMIN_ID);
         assertEquals(0, meals.size());
     }
     
     @Test
-    public void filterTimeInBoundOneFromRegularUser() {
+    public void filterTimeInBoundOneBreakfastFromRegularUser() {
         List<Meal> meals = mealService.getBetweenDateTimes(
                 MEAL_30_1.getDateTime().minusMinutes(20),
                 MEAL_30_1.getDateTime().plusMinutes(20),
                 USER_ID);
-        assertNotNull(meals);
         assertEquals(3, meals.size());
-        assertEquals(MEAL_30_3.getDescription(), meals.get(0).getDescription());
-        assertEquals(MEAL_30_3.getDateTime(), meals.get(0).getDateTime());
-        assertEquals(MEAL_30_3.getCalories(), meals.get(0).getCalories());
-        assertEquals(MEAL_30_1.getDescription(), meals.get(2).getDescription());
-        assertEquals(MEAL_30_1.getDateTime(), meals.get(2).getDateTime());
-        assertEquals(MEAL_30_1.getCalories(), meals.get(2).getCalories());
-
+        assertThat(meals.get(0)).isEqualToComparingFieldByField(MEAL_30_3);
+        assertThat(meals.get(2)).isEqualToComparingFieldByField(MEAL_30_1);
     }
 
     @Test
-    public void filterShouldDependsOnDaysNotTime() {
-        
+    public void filterTimeInBoundTwoDaysFromRegularUser() {
+        List<Meal> meals = mealService.getBetweenDateTimes(
+                MEAL_30_1.getDateTime().minusMinutes(20),
+                MEAL_31_1.getDateTime().minusMinutes(10),
+                USER_ID);
+        assertEquals(6, meals.size());
+        assertThat(meals.get(0)).isEqualToComparingFieldByField(MEAL_31_3);
+        assertThat(meals.get(5)).isEqualToComparingFieldByField(MEAL_30_1);
     }
 }
