@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -17,7 +18,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static ru.javawebinar.topjava.UserTestData.*;
+import static ru.javawebinar.topjava.UserTestData.ADMIN;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.helper.AssertEx.assertMatchEx;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration({
@@ -39,10 +44,11 @@ public class UserServiceTest {
 
     @Test
     public void create() {
-        User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
+        User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(),
+                Collections.singleton(Role.ROLE_USER));
         User created = userService.create(newUser);
         newUser.setId(created.getId());
-        assertMatch(userService.getAll(), ADMIN, newUser, USER);
+        assertMatchEx(userService.getAll(), asList(ADMIN, newUser, USER), USER_IGNORED_FIELDS);
     }
 
     @Test(expected = DataAccessException.class)
@@ -53,7 +59,7 @@ public class UserServiceTest {
     @Test
     public void delete() {
         userService.delete(USER_ID);
-        assertMatch(userService.getAll(), ADMIN);
+        assertMatchEx(userService.getAll(), asList(ADMIN), USER_IGNORED_FIELDS);
     }
 
     @Test(expected = NotFoundException.class)
@@ -64,7 +70,7 @@ public class UserServiceTest {
     @Test
     public void get() {
         User user = userService.get(USER_ID);
-        assertMatch(user, USER);
+        assertMatchEx(user, USER, USER_IGNORED_FIELDS);
     }
 
     @Test(expected = NotFoundException.class)
@@ -75,7 +81,7 @@ public class UserServiceTest {
     @Test
     public void getByEmail() {
         User user = userService.getByEmail("user@yandex.ru");
-        assertMatch(user, USER);
+        assertMatchEx(user, USER, USER_IGNORED_FIELDS);
     }
 
     @Test
@@ -84,12 +90,12 @@ public class UserServiceTest {
         updated.setName("UpdatedName");
         updated.setCaloriesPerDay(330);
         userService.update(updated);
-        assertMatch(userService.get(USER_ID), updated);
+        assertMatchEx(userService.get(USER_ID), updated, USER_IGNORED_FIELDS);
     }
 
     @Test
     public void getAll() {
         List<User> all = userService.getAll();
-        assertMatch(all, ADMIN, USER);
+        assertMatchEx(all, asList(ADMIN, USER), USER_IGNORED_FIELDS);
     }
 }
