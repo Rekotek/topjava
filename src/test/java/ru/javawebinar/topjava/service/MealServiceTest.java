@@ -10,7 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -159,15 +160,28 @@ public class MealServiceTest {
                 MEAL_30_1.getDateTime().minusMinutes(20),
                 MEAL_30_1.getDateTime().plusMinutes(20),
                 USER_ID);
-        assertMatchEx(meals, asList(MEAL_30_3, MEAL_30_2, MEAL_30_1));
+        assertMatchEx(meals, asList(MEAL_30_1));
     }
 
     @Test
     public void filterTimeInBoundTwoDaysFromRegularUser() {
         List<Meal> meals = mealService.getBetweenDateTimes(
                 MEAL_30_1.getDateTime().minusMinutes(20),
-                MEAL_31_2.getDateTime().minusMinutes(10),
+                MEAL_31_1.getDateTime().minusMinutes(10),
                 USER_ID);
-        assertMatchEx(meals, MEAL_LIST_REVERSED);
+        assertMatchEx(meals, asList(MEAL_30_3, MEAL_30_2, MEAL_30_1));
+    }
+
+    @Test
+    public void filterLocalTimeMax() {
+        final LocalDateTime END_OF_THE_DAY = LocalDateTime.of(MEAL_30_3.getDate(), LocalTime.MAX);
+        Meal updatedMeal = new Meal(MEAL_30_3.getId(), END_OF_THE_DAY, MEAL_30_3.getDescription(), MEAL_30_3.getCalories());
+        mealService.update(updatedMeal, USER_ID);
+        List<Meal> meals = mealService.getBetweenDateTimes(
+                MEAL_30_1.getDateTime(),
+                updatedMeal.getDateTime(),
+                USER_ID);
+        assertMatchEx(meals, asList(updatedMeal, MEAL_30_2, MEAL_30_1));
+
     }
 }
