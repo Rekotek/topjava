@@ -15,6 +15,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.helper.AssertEx.assertMatchEx;
 
@@ -64,9 +65,7 @@ public class MealServiceTest {
     public void deleteFromRegularUser() {
         mealService.delete(MEAL_30_3.getId(), USER_ID);
         List<Meal> meals = mealService.getAll(USER_ID);
-        ArrayList<Meal> newExpectedList = new ArrayList<>(MEAL_LIST_REVERSED);
-        newExpectedList.remove(MEAL_30_3);
-        assertMatchEx(meals, newExpectedList);
+        assertFalse(meals.contains(MEAL_30_3));
     }
 
     @Test(expected = NotFoundException.class)
