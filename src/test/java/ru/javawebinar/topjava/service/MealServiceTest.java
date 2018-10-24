@@ -66,6 +66,7 @@ public class MealServiceTest {
         mealService.delete(MEAL_30_3.getId(), USER_ID);
         List<Meal> meals = mealService.getAll(USER_ID);
         assertFalse(meals.contains(MEAL_30_3));
+        assertEquals(MEAL_LIST_REVERSED.size() - 1, meals.size());
     }
 
     @Test(expected = NotFoundException.class)
