@@ -7,7 +7,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.helper.AssertEx;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -17,6 +16,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.helper.AssertEx.assertMatchEx;
 
 /**
  * Created by taras on 2018-10-21.
@@ -41,7 +41,7 @@ public class MealServiceTest {
     @Test
     public void getAllFromRegularUser() {
         List<Meal> meals = mealService.getAll(USER_ID);
-        AssertEx.assertMatchEx(MEAL_LIST_REVERSED, meals);
+        assertMatchEx(MEAL_LIST_REVERSED, meals);
     }
 
     @Test(expected = NotFoundException.class)
@@ -52,7 +52,7 @@ public class MealServiceTest {
     @Test
     public void getOneFromRegularUser() {
         Meal meal = mealService.get(MEAL_30_1.getId(), USER_ID);
-        AssertEx.assertMatchEx(meal, MEAL_30_1);
+        assertMatchEx(meal, MEAL_30_1);
     }
 
     @Test(expected = NotFoundException.class)
@@ -66,7 +66,7 @@ public class MealServiceTest {
         List<Meal> meals = mealService.getAll(USER_ID);
         ArrayList<Meal> newExpectedList = new ArrayList<>(MEAL_LIST_REVERSED);
         newExpectedList.remove(MEAL_30_3);
-        AssertEx.assertMatchEx(meals, newExpectedList);
+        assertMatchEx(meals, newExpectedList);
     }
 
     @Test(expected = NotFoundException.class)
@@ -78,7 +78,7 @@ public class MealServiceTest {
     public void updateFromRegularUser() {
         mealService.update(MEAL_30_2_UPDATED, USER_ID);
         Meal mealNew = mealService.get(MEAL_30_2_UPDATED.getId(), USER_ID);
-        AssertEx.assertMatchEx(mealNew, MEAL_30_2_UPDATED);
+        assertMatchEx(mealNew, MEAL_30_2_UPDATED);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class MealServiceTest {
                 MEAL_30_1.getDate(),
                 MEAL_31_3.getDate(),
                 USER_ID);
-        AssertEx.assertMatchEx(meals, MEAL_LIST_REVERSED);
+        assertMatchEx(meals, MEAL_LIST_REVERSED);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class MealServiceTest {
                 MEAL_30_1.getDate(),
                 MEAL_30_3.getDate(),
                 USER_ID);
-        AssertEx.assertMatchEx(meals, asList(MEAL_30_3, MEAL_30_2, MEAL_30_1));
+        assertMatchEx(meals, asList(MEAL_30_3, MEAL_30_2, MEAL_30_1));
     }
 
     @Test
@@ -159,15 +159,15 @@ public class MealServiceTest {
                 MEAL_30_1.getDateTime().minusMinutes(20),
                 MEAL_30_1.getDateTime().plusMinutes(20),
                 USER_ID);
-        AssertEx.assertMatchEx(meals, asList(MEAL_30_3, MEAL_30_2, MEAL_30_1));
+        assertMatchEx(meals, asList(MEAL_30_3, MEAL_30_2, MEAL_30_1));
     }
 
     @Test
     public void filterTimeInBoundTwoDaysFromRegularUser() {
         List<Meal> meals = mealService.getBetweenDateTimes(
                 MEAL_30_1.getDateTime().minusMinutes(20),
-                MEAL_31_1.getDateTime().minusMinutes(10),
+                MEAL_31_2.getDateTime().minusMinutes(10),
                 USER_ID);
-        AssertEx.assertMatchEx(meals, MEAL_LIST_REVERSED);
+        assertMatchEx(meals, MEAL_LIST_REVERSED);
     }
 }
