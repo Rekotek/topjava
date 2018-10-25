@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.helper.AssertEx.assertMatchEx;
+import static ru.javawebinar.topjava.util.DateTimeUtil.MAX_POSTGRESQL_TIME;
 
 /**
  * Created by taras on 2018-10-21.
@@ -174,7 +175,7 @@ public class MealServiceTest {
 
     @Test
     public void filterLocalTimeMax() {
-        final LocalDateTime END_OF_THE_DAY = LocalDateTime.of(MEAL_30_3.getDate(), LocalTime.MAX);
+        final LocalDateTime END_OF_THE_DAY = LocalDateTime.of(MEAL_30_3.getDate(), MAX_POSTGRESQL_TIME);
         Meal updatedMeal = new Meal(MEAL_30_3.getId(), END_OF_THE_DAY, MEAL_30_3.getDescription(), MEAL_30_3.getCalories());
         mealService.update(updatedMeal, USER_ID);
         List<Meal> meals = mealService.getBetweenDateTimes(

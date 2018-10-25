@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.MAX_POSTGRESQL_TIME;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
@@ -77,7 +78,7 @@ public class MealRestController {
 
         return MealsUtil.getFilteredWithExcess(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(),
                 startTime != null ? startTime : LocalTime.MIN,
-                endTime != null ? endTime : LocalTime.MAX
+                endTime != null ? endTime : MAX_POSTGRESQL_TIME
         );
     }
 }
