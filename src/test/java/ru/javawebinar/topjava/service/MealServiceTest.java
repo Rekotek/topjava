@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -17,7 +19,6 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -41,6 +42,9 @@ public class MealServiceTest {
     static {
         SLF4JBridgeHandler.install();
     }
+
+    @Autowired
+    private MealService service;
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
@@ -68,9 +72,6 @@ public class MealServiceTest {
                 log.info("Running time for method '" + k + "'(): " + v + "ms.")
         );
     }
-
-    @Autowired
-    private MealService service;
 
     @Test
     public void delete() {
