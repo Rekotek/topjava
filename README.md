@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Rekotek/topjava.svg?branch=master)](https://travis-ci.org/Rekotek/topjava)
+[![Build Status](https://travis-ci.org/Rekotek/topjava.svg?branch=HW04)](https://travis-ci.org/Rekotek/topjava)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5e140c9ce8d3462583bdd1bd4cafeec9)](https://www.codacy.com/app/Rekotek/topjava?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Rekotek/topjava&amp;utm_campaign=Badge_Grade)
 
 Java Enterprise Online Project 
