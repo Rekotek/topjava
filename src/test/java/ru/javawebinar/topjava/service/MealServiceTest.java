@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import java.time.Month;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.util.ValidationUtil.MSG_ID;
+import static ru.javawebinar.topjava.util.ValidationUtil.MSG_NOT_FOUND_ENTITY_WITH;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -30,6 +34,9 @@ public class MealServiceTest {
         SLF4JBridgeHandler.install();
     }
 
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
+
     @Autowired
     private MealService service;
 
@@ -39,8 +46,10 @@ public class MealServiceTest {
         assertMatch(service.getAll(USER_ID), MEAL6, MEAL5, MEAL4, MEAL3, MEAL2);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteNotFound() {
+        exception.expect(NotFoundException.class);
+        exception.expectMessage(MSG_NOT_FOUND_ENTITY_WITH + MSG_ID + MEAL1_ID);
         service.delete(MEAL1_ID, 1);
     }
 
@@ -57,8 +66,10 @@ public class MealServiceTest {
         assertMatch(actual, ADMIN_MEAL1);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void getNotFound() {
+        exception.expect(NotFoundException.class);
+        exception.expectMessage(MSG_NOT_FOUND_ENTITY_WITH + MSG_ID + MEAL1_ID);
         service.get(MEAL1_ID, ADMIN_ID);
     }
 
@@ -69,8 +80,10 @@ public class MealServiceTest {
         assertMatch(service.get(MEAL1_ID, USER_ID), updated);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void updateNotFound() {
+        exception.expect(NotFoundException.class);
+        exception.expectMessage(MSG_NOT_FOUND_ENTITY_WITH + MSG_ID + MEAL1_ID);
         service.update(MEAL1, ADMIN_ID);
     }
 
