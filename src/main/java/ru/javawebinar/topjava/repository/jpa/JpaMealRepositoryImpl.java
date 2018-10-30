@@ -7,7 +7,6 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,18 +27,14 @@ public class JpaMealRepositoryImpl implements MealRepository {
             em.persist(meal);
             return meal;
         } else {
-            if (em.createNamedQuery(Meal.UPDATE)
-                    .setParameter("id", meal.getId())
-                    .setParameter("user_id", userId)
-                    .setParameter("description", meal.getDescription())
-                    .setParameter("calories", meal.getCalories())
-                    .setParameter("date_time", meal.getDateTime())
-                    .executeUpdate() != 0) {
-                return meal;
-            } else {
+            Meal mealInDb = em.find(Meal.class, meal.getId());
+            if (mealInDb.getUser().getId() != userId) {
                 return null;
             }
+            meal.setUser(mealInDb.getUser());
+            return em.merge(meal);
         }
+
     }
 
     @Override
@@ -53,14 +48,11 @@ public class JpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        try {
-            return em.createNamedQuery(Meal.GET_ONE, Meal.class)
-                    .setParameter("id", id)
-                    .setParameter("user_id", userId)
-                    .getSingleResult();
-        } catch (NoResultException e) {
+            Meal meal = em.find(Meal.class, id);
+        if (meal.getUser().getId() != userId) {
             return null;
-        }
+        } else
+            return meal;
     }
 
     @Override

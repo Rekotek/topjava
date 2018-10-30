@@ -4,7 +4,7 @@ import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.rules.TestWatcher;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -19,8 +19,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -37,7 +38,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.MSG_NOT_FOUND_ENTITY_WI
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = getLogger(MealServiceTest.class);
-    private static final Map<String, Long> executionTimeMap = new LinkedHashMap<>();
+    private static final List<String> executionTimeList = new ArrayList<>();
 
     static {
         SLF4JBridgeHandler.install();
@@ -50,27 +51,23 @@ public class MealServiceTest {
     public final ExpectedException exception = ExpectedException.none();
 
     @Rule
-    public TestWatcher watcher = new TestWatcher() {
-        private long beginningTime;
-
+    public Stopwatch stopwatch = new Stopwatch() {
         @Override
-        protected void starting(Description description) {
-            beginningTime = System.currentTimeMillis();
-        }
-
-        @Override
-        protected void finished(Description description) {
-            long executionTime = System.currentTimeMillis() - beginningTime;
-            log.info("Running time for method '" + description.getMethodName() + "()': " + executionTime + " ms.");
-            executionTimeMap.put(description.getMethodName(), executionTime);
+        protected void finished(long nanos, Description description) {
+            long micros = TimeUnit.NANOSECONDS.toMicros(nanos);
+            String executionInfo = "Running time for method '" + description.getMethodName() + "()': " + micros + " µs.";
+            log.info(executionInfo);
+            executionTimeList.add(executionInfo);
         }
     };
 
     @AfterClass
     public static void tearDownAll() {
-        executionTimeMap.forEach((k, v) ->
-                log.info("Running time for method '" + k + "'(): " + v + "ms.")
-        );
+        StringBuilder output = new StringBuilder("\n========== TEST METHODS' EXECUTION TIME ==========\n");
+        for (String executionInfo : executionTimeList) {
+            output.append(executionInfo).append("\n");
+        }
+        log.info(output.toString());
     }
 
     @Test
