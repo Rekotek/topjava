@@ -54,8 +54,8 @@ public class MealServiceTest {
     public Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            long micros = TimeUnit.NANOSECONDS.toMicros(nanos);
-            String executionInfo = "Running time for method '" + description.getMethodName() + "()': " + micros + " µs.";
+            long millis = TimeUnit.NANOSECONDS.toMillis(nanos);
+            String executionInfo = description.getMethodName() + "(): " + millis + " ms.";
             log.info(executionInfo);
             executionTimeList.add(executionInfo);
         }
@@ -104,6 +104,13 @@ public class MealServiceTest {
     }
 
     @Test
+    public void getNotExisting() {
+        exception.expect(NotFoundException.class);
+        exception.expectMessage(MSG_NOT_FOUND_ENTITY_WITH + MSG_ID + MEAL_NOT_EXISTED_ID);
+        service.get(MEAL_NOT_EXISTED_ID, USER_ID);
+    }
+
+    @Test
     public void update() {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
@@ -115,6 +122,13 @@ public class MealServiceTest {
         exception.expect(NotFoundException.class);
         exception.expectMessage(MSG_NOT_FOUND_ENTITY_WITH + MSG_ID + MEAL1_ID);
         service.update(MEAL1, ADMIN_ID);
+    }
+
+    @Test
+    public void updateNotExisting() {
+        exception.expect(NotFoundException.class);
+        exception.expectMessage(MSG_NOT_FOUND_ENTITY_WITH + MSG_ID + MEAL_NOT_EXISTED_ID);
+        service.update(MEAL_NOT_EXISTED, ADMIN_ID);
     }
 
     @Test
