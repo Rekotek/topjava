@@ -23,7 +23,7 @@ abstract public class JdbcMealBaseRepository implements MealRepository {
 
     private final SimpleJdbcInsert insertMeal;
 
-    abstract protected Object amendDateTime(LocalDateTime localDateTime);
+    abstract protected <T> T amendDateTime(LocalDateTime localDateTime);
 
     public JdbcMealBaseRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)

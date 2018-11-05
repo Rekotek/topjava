@@ -20,7 +20,7 @@ public class HsqldbMealRepositoryImpl extends JdbcMealBaseRepository {
     }
 
     @Override
-    protected Object amendDateTime(LocalDateTime localDateTime) {
+    protected Timestamp amendDateTime(LocalDateTime localDateTime) {
         return Timestamp.valueOf(localDateTime);
     }
 }
