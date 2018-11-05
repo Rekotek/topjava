@@ -39,6 +39,18 @@ public class MealServiceDataJpaTest extends MealServiceTest {
 
     @Test
     @Override
+    public void getWithUser() {
+        super.getWithUser();
+    }
+
+    @Test
+    @Override
+    public void getWithUserNotFound() {
+        super.getWithUserNotFound();
+    }
+
+    @Test
+    @Override
     public void update() throws Exception {
         super.update();
     }

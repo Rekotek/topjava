@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +16,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.time.LocalDate;
 import java.time.Month;
 
-import static org.slf4j.LoggerFactory.getLogger;
+import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.MealTestData.*;
-import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
-import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -60,6 +58,17 @@ abstract public class MealServiceTest extends AbstractTestHelper {
     public void getNotFound() throws Exception {
         thrown.expect(NotFoundException.class);
         service.get(MEAL1_ID, ADMIN_ID);
+    }
+
+    public void getWithUser() {
+        Meal actual = service.getWithUser(ADMIN_MEAL_ID, ADMIN_ID);
+        ADMIN_MEAL1.setUser(ADMIN);
+        assertMatchWithUser(actual, ADMIN_MEAL1);
+    }
+
+    public void getWithUserNotFound() {
+        thrown.expect(NotFoundException.class);
+        service.getWithUser(MEAL1_ID, ADMIN_ID);
     }
 
     public void update() throws Exception {
