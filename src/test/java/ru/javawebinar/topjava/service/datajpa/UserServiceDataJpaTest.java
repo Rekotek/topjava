@@ -63,4 +63,22 @@ public class UserServiceDataJpaTest extends UserServiceTest {
     public void getAll() throws Exception {
         super.getAll();
     }
+
+    @Test
+    @Override
+    public void getWithMeals() {
+        super.getWithMeals();
+    }
+
+
+    @Test(expected = NotFoundException.class)
+    @Override
+    public void getWithMealsNotFound() throws Exception {
+        super.getWithMealsNotFound();
+    }
+
+    @Override
+    public void getWithEmptyMeal() {
+        super.getWithEmptyMeal();
+    }
 }
