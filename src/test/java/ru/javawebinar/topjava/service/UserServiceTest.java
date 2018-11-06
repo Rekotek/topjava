@@ -1,10 +1,11 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -13,12 +14,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static ru.javawebinar.topjava.MealTestData.MEALS;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
@@ -31,10 +32,7 @@ import static ru.javawebinar.topjava.UserTestData.*;
 abstract public class UserServiceTest extends AbstractTestHelper {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private MealService mealService;
+    protected UserService userService;
 
     @Autowired
     private CacheManager cacheManager;
@@ -44,6 +42,7 @@ abstract public class UserServiceTest extends AbstractTestHelper {
         cacheManager.getCache("users").clear();
     }
 
+    @Test
     public void create() throws Exception {
         User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
         User created = userService.create(newUser);
@@ -51,33 +50,40 @@ abstract public class UserServiceTest extends AbstractTestHelper {
         assertMatch(userService.getAll(), ADMIN, newUser, USER);
     }
 
+    @Test(expected = DataAccessException.class)
     public void duplicateMailCreate() throws Exception {
         userService.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER));
     }
 
+    @Test
     public void delete() throws Exception {
         userService.delete(USER_ID);
         assertMatch(userService.getAll(), ADMIN);
     }
 
+    @Test(expected = NotFoundException.class)
     public void deletedNotFound() throws Exception {
         userService.delete(1);
     }
 
+    @Test
     public void get() throws Exception {
         User user = userService.get(USER_ID);
         assertMatch(user, USER);
     }
 
+    @Test(expected = NotFoundException.class)
     public void getNotFound() throws Exception {
         userService.get(1);
     }
 
+    @Test
     public void getByEmail() throws Exception {
         User user = userService.getByEmail("user@yandex.ru");
         assertMatch(user, USER);
     }
 
+    @Test
     public void update() throws Exception {
         User updated = new User(USER);
         updated.setName("UpdatedName");
@@ -86,26 +92,9 @@ abstract public class UserServiceTest extends AbstractTestHelper {
         assertMatch(userService.get(USER_ID), updated);
     }
 
+    @Test
     public void getAll() throws Exception {
         List<User> all = userService.getAll();
         assertMatch(all, ADMIN, USER);
-    }
-
-    public void getWithMeals() {
-        USER.setMeals(MEALS);
-        User user = userService.getWithMeals(USER_ID);
-        assertMatchWithMeals(user, USER);
-    }
-
-    public void getWithMealsNotFound() throws Exception {
-        userService.getWithMeals(1);
-    }
-
-    public void getWithEmptyMeal() {
-        User user = userService.getWithMeals(USER_ID);
-        user.getMeals().forEach(meal -> mealService.delete(meal.getId(), USER_ID));
-        User newUser = userService.getWithMeals(USER_ID);
-        Assert.assertNotNull(newUser.getMeals());
-        assertMatchWithMeals(USER, newUser);
     }
 }

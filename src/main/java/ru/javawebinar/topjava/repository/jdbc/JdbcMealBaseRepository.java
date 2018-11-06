@@ -13,7 +13,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-abstract public class JdbcMealBaseRepository implements MealRepository {
+abstract public class JdbcMealBaseRepository<T> implements MealRepository {
 
     private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
@@ -23,7 +23,7 @@ abstract public class JdbcMealBaseRepository implements MealRepository {
 
     private final SimpleJdbcInsert insertMeal;
 
-    abstract protected <T> T amendDateTime(LocalDateTime localDateTime);
+    abstract protected T amendDateTime(LocalDateTime localDateTime);
 
     public JdbcMealBaseRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class UserTestData {
@@ -28,7 +27,7 @@ public class UserTestData {
 
     public static void assertMatchWithMeals(User actual, User expected) {
         assertThat(actual).isEqualToIgnoringGivenFields(expected, "registered", "roles", "meals");
-        assertTrue(actual.getMeals().containsAll(expected.getMeals()));
+        MealTestData.assertMatch(actual.getMeals(), expected.getMeals());
     }
 
     public static void assertMatch(Iterable<User> actual, User... expected) {

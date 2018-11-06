@@ -1,84 +1,51 @@
 package ru.javawebinar.topjava.service.datajpa;
 
 import org.junit.Test;
-import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ActiveProfiles;
+import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.Profiles;
+import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.Role;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserServiceTest;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static ru.javawebinar.topjava.MealTestData.MEALS;
+import static ru.javawebinar.topjava.UserTestData.*;
+
 @ActiveProfiles(Profiles.DATAJPA)
 public class UserServiceDataJpaTest extends UserServiceTest {
-
     @Test
-    @Override
-    public void create() throws Exception {
-        super.create();
-    }
-
-    @Test(expected = DataAccessException.class)
-    @Override
-    public void duplicateMailCreate() throws Exception {
-        super.duplicateMailCreate();
-    }
-
-    @Test
-    @Override
-    public void delete() throws Exception {
-        super.delete();
-    }
-
-    @Test(expected = NotFoundException.class)
-    @Override
-    public void deletedNotFound() throws Exception {
-        super.deletedNotFound();
-    }
-
-    @Test
-    @Override
-    public void get() throws Exception {
-        super.get();
-    }
-
-    @Test(expected = NotFoundException.class)
-    @Override
-    public void getNotFound() throws Exception {
-        super.getNotFound();
-    }
-
-    @Test
-    @Override
-    public void getByEmail() throws Exception {
-        super.getByEmail();
-    }
-
-    @Test
-    @Override
-    public void update() throws Exception {
-        super.update();
-    }
-
-    @Test
-    @Override
-    public void getAll() throws Exception {
-        super.getAll();
-    }
-
-    @Test
-    @Override
     public void getWithMeals() {
-        super.getWithMeals();
-    }
+        User user = userService.getWithMeals(USER_ID);
 
+        assertMatch(user, USER);
+        List<Meal> meals = user.getMeals();
+        MealTestData.assertMatch(meals, MEALS);
+
+        //More elegant way
+        USER.setMeals(MEALS);
+        assertMatchWithMeals(user, USER);
+    }
 
     @Test(expected = NotFoundException.class)
-    @Override
-    public void getWithMealsNotFound() throws Exception {
-        super.getWithMealsNotFound();
+    public void getWithMealsNotFound() {
+        userService.getWithMeals(1);
     }
 
-    @Override
+    @Test
     public void getWithEmptyMeal() {
-        super.getWithEmptyMeal();
+        User storedUser = userService.create(
+                new User(null,
+                        "Vasisualiy Pupkins",
+                        "pupkin@yandex.ru",
+                        "12345",
+                        Role.ROLE_USER));
+        storedUser.setMeals(new ArrayList<>());
+        User newUser = userService.getWithMeals(storedUser.getId());
+        assertMatchWithMeals(newUser, storedUser);
     }
 }
