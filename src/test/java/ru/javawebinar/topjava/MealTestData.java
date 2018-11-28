@@ -3,6 +3,7 @@ package ru.javawebinar.topjava;
 import org.springframework.test.web.servlet.ResultMatcher;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.to.MealTo;
 
 import java.time.Month;
 import java.util.List;
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 import static ru.javawebinar.topjava.web.json.JsonUtil.writeIgnoreProps;
+import static ru.javawebinar.topjava.web.json.JsonUtil.writeValue;
 
 public class MealTestData {
     public static final int MEAL1_ID = START_SEQ + 2;
@@ -19,15 +21,31 @@ public class MealTestData {
     public static final int CREATED_MEAL_ID = START_SEQ + 10;
 
     public static final Meal MEAL1 = new Meal(MEAL1_ID, of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500);
+    public static final MealTo MEAL_TO_1 = new MealTo(MEAL1.getId(), MEAL1.getDateTime(), MEAL1.getDescription(), MEAL1.getCalories(), false);
+
     public static final Meal MEAL2 = new Meal(MEAL1_ID + 1, of(2015, Month.MAY, 30, 13, 0), "Обед", 1000);
+    public static final MealTo MEAL_TO_2 = new MealTo(MEAL2.getId(), MEAL2.getDateTime(), MEAL2.getDescription(), MEAL2.getCalories(), false);
+
     public static final Meal MEAL3 = new Meal(MEAL1_ID + 2, of(2015, Month.MAY, 30, 20, 0), "Ужин", 500);
+    public static final MealTo MEAL_TO_3 = new MealTo(MEAL3.getId(), MEAL3.getDateTime(), MEAL3.getDescription(), MEAL3.getCalories(), false);
+
     public static final Meal MEAL4 = new Meal(MEAL1_ID + 3, of(2015, Month.MAY, 31, 10, 0), "Завтрак", 500);
+    public static final MealTo MEAL_TO_4 = new MealTo(MEAL4.getId(), MEAL4.getDateTime(), MEAL4.getDescription(), MEAL4.getCalories(), true);
+
     public static final Meal MEAL5 = new Meal(MEAL1_ID + 4, of(2015, Month.MAY, 31, 13, 0), "Обед", 1000);
+    public static final MealTo MEAL_TO_5 = new MealTo(MEAL5.getId(), MEAL5.getDateTime(), MEAL5.getDescription(), MEAL5.getCalories(), true);
+
     public static final Meal MEAL6 = new Meal(MEAL1_ID + 5, of(2015, Month.MAY, 31, 20, 0), "Ужин", 510);
+    public static final MealTo MEAL_TO_6 = new MealTo(MEAL6.getId(), MEAL6.getDateTime(), MEAL6.getDescription(), MEAL6.getCalories(), true);
+
     public static final Meal ADMIN_MEAL1 = new Meal(ADMIN_MEAL_ID, of(2015, Month.JUNE, 1, 14, 0), "Админ ланч", 510);
+    public static final MealTo ADMIN_MEAL_TO_1 = new MealTo(ADMIN_MEAL1.getId(), ADMIN_MEAL1.getDateTime(), ADMIN_MEAL1.getDescription(), ADMIN_MEAL1.getCalories(), true);
+
     public static final Meal ADMIN_MEAL2 = new Meal(ADMIN_MEAL_ID + 1, of(2015, Month.JUNE, 1, 21, 0), "Админ ужин", 1500);
+    public static final MealTo ADMIN_MEAL_TO_2 = new MealTo(ADMIN_MEAL2.getId(), ADMIN_MEAL2.getDateTime(), ADMIN_MEAL2.getDescription(), ADMIN_MEAL2.getCalories(), true);
 
     public static final List<Meal> MEALS = List.of(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1);
+    public static final List<MealTo> MEALS_TO = List.of(MEAL_TO_6, MEAL_TO_5, MEAL_TO_4, MEAL_TO_3, MEAL_TO_2, MEAL_TO_1);
 
     public static Meal getCreated() {
         return new Meal(null, of(2015, Month.JUNE, 1, 18, 0), "Созданный ужин", 300);
@@ -47,18 +65,5 @@ public class MealTestData {
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
         assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected);
-    }
-
-    public static ResultMatcher contentJson(Meal... expected) {
-        return contentJson(List.of(expected));
-    }
-
-    public static ResultMatcher contentJson(List<Meal> expected) {
-        return content().json(writeIgnoreProps(expected, "user"));
-    }
-
-
-    public static ResultMatcher contentJson(Meal expected) {
-        return content().json(writeIgnoreProps(expected, "user"));
     }
 }

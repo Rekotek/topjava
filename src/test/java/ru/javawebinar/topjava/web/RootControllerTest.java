@@ -1,18 +1,14 @@
 package ru.javawebinar.topjava.web;
 
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
-import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealTo;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.MealTestData.MEALS_TO;
 import static ru.javawebinar.topjava.UserTestData.USER;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
-import static ru.javawebinar.topjava.web.json.JsonMatchers.mealMatcher;
 
 class RootControllerTest extends AbstractControllerTest {
 
@@ -40,15 +36,6 @@ class RootControllerTest extends AbstractControllerTest {
                 .andExpect(view().name("meals"))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
                 .andExpect(model().attribute("meals", hasSize(6)))
-                .andExpect(model().attribute("meals", contains(
-                                mealMatcher(MEAL6, true),
-                                mealMatcher(MEAL5, true),
-                                mealMatcher(MEAL4, true),
-                                mealMatcher(MEAL3, false),
-                                mealMatcher(MEAL2, false),
-                                mealMatcher(MEAL1, false)
-                )));
+                .andExpect(model().attribute("meals", hasItems(MEALS_TO)));
     }
-
-
 }
