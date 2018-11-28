@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.USER;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
+import static ru.javawebinar.topjava.web.json.JsonMatchers.mealMatcher;
 
 class RootControllerTest extends AbstractControllerTest {
 
@@ -49,13 +50,5 @@ class RootControllerTest extends AbstractControllerTest {
                 )));
     }
 
-    private Matcher<MealTo> mealMatcher(final Meal meal, boolean excess) {
-        return allOf(
-                hasProperty("id", is(meal.getId())),
-                hasProperty("description", is(meal.getDescription())),
-                hasProperty("calories", is(meal.getCalories())),
-                hasProperty("dateTime", is(meal.getDateTime())),
-                hasProperty("excess", is(excess))
-        );
-    }
+
 }
