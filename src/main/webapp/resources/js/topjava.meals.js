@@ -35,7 +35,7 @@ $(function () {
 });
 
 function resetFilter() {
-    $("#filterForm").find(":input").val("");
+    document.getElementById("filterForm").reset();
     updateTable();
 }
 
@@ -53,23 +53,21 @@ function addMeal() {
 }
 
 function updateTable() {
+    let isEmpty = true;
     let form = $("#filterForm");
-    $.ajax({
-        type: "GET",
-        url: ajaxUrl + "filter/",
-        data: form.serialize()
-    }).done(function (data) {
-        datatableApi.clear().rows.add(data).draw();
+    form.find(":input").each(function () {
+        if ($.trim($(this).val()) !== '') {
+            isEmpty = false;
+        }
     });
-}
 
-function applyFilter() {
-    let form = $("#filterForm");
+    const targetUrl = (isEmpty) ? ajaxUrl : ajaxUrl + "filter/";
+    const dataBody = (isEmpty) ? {} : form.serialize();
     $.ajax({
         type: "GET",
-        url: ajaxUrl + "filter/",
-        data: form.serialize()
+        url: targetUrl,
+        data: dataBody
     }).done(function (data) {
-        datatableApi.clear().rows.add(data).draw();
+        applyDataToTable(data);
     });
 }

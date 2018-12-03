@@ -10,7 +10,9 @@ import ru.javawebinar.topjava.web.AbstractControllerTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javawebinar.topjava.UserTestData.NON_EXISTING_USER_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 class AdminAjaxControllerTest extends AbstractControllerTest {

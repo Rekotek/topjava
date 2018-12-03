@@ -41,13 +41,17 @@ $(function () {
     makeEditable();
 });
 
-function changeEnableFlag(id, checked) {
+function changeEnableFlag(id, checkBox) {
+    const checked = checkBox.is(':checked');
     $.ajax({
         type: "POST",
         url: ajaxUrl + id + '/enabled',
         data: {"flag": checked}
     }).done(function () {
         updateTable();
-        successNoty("Saved");
+        const notyStr = (checked) ? "Enabled" : "Disabled";
+        successNoty(notyStr);
+    }).fail(function () {
+        checkBox.prop("checked", !checked);
     });
 }

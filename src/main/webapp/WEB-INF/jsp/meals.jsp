@@ -58,7 +58,7 @@
                 </div>
                 <button type="button"
                         class="btn btn-secondary"
-                        onclick="applyFilter()">
+                        onclick="updateTable()">
                     <spring:message code="meal.filter"/>
                 </button>
                 <button type="button"

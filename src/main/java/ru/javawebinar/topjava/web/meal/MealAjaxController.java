@@ -53,6 +53,7 @@ public class MealAjaxController extends AbstractMealController {
 
     @GetMapping("/defaultcalories")
     public int getDefaultCalories() {
-        return SecurityUtil.authUserCaloriesPerDay();
+        // Magic number such as at the corresponding JSP
+        return 1000;
     }
 }

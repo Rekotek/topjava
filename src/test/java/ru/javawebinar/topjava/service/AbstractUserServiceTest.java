@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 public abstract class AbstractUserServiceTest extends AbstractServiceTest {
@@ -87,5 +87,34 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     void getAll() throws Exception {
         List<User> all = service.getAll();
         assertMatch(all, ADMIN, USER);
+    }
+
+    @Test
+    void clearEnabledFlag() {
+        service.setEnabledFlag(USER_ID, false);
+        User user = service.get(USER_ID);
+        assertFalse(user.isEnabled());
+    }
+
+    @Test
+    void setEnabledFlag() {
+        User updated = new User(USER);
+        updated.setEnabled(false);
+        service.update(updated);
+        service.setEnabledFlag(USER_ID, true);
+        User user = service.get(USER_ID);
+        assertTrue(user.isEnabled());
+    }
+
+    @Test
+    void clearEnabledFlagForNonExistingUser() {
+        assertThrows(NotFoundException.class, () ->
+                service.setEnabledFlag(NON_EXISTING_USER_ID, false));
+    }
+
+    @Test
+    void setEnabledFlagForNonExistingUser() {
+        assertThrows(NotFoundException.class, () ->
+                service.setEnabledFlag(NON_EXISTING_USER_ID, true));
     }
 }
