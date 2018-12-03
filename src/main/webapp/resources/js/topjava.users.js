@@ -40,3 +40,14 @@ $(function () {
     });
     makeEditable();
 });
+
+function changeEnableFlag(id, checked) {
+    $.ajax({
+        type: "POST",
+        url: ajaxUrl + id + '/enabled',
+        data: {"flag": checked}
+    }).done(function () {
+        updateTable();
+        successNoty("Saved");
+    });
+}

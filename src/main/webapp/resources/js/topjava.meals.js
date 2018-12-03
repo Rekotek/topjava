@@ -41,16 +41,35 @@ function resetFilter() {
 
 let defaultCalories;
 $.get(ajaxUrl + "defaultcalories", function (data) {
-    debugger;
     defaultCalories = data;
 });
 
 function addMeal() {
-    // call that strange common function for showing modal form
     add();
-    debugger;
-    let iso_date = convertToISODateTime( new Date() );
+    let iso_date = convertToISODateTime(new Date());
     $("#dateTime").val(iso_date);
     $("#description").val("Прием пищи");
     $("#calories").val(defaultCalories);
+}
+
+function updateTable() {
+    let form = $("#filterForm");
+    $.ajax({
+        type: "GET",
+        url: ajaxUrl + "filter/",
+        data: form.serialize()
+    }).done(function (data) {
+        datatableApi.clear().rows.add(data).draw();
+    });
+}
+
+function applyFilter() {
+    let form = $("#filterForm");
+    $.ajax({
+        type: "GET",
+        url: ajaxUrl + "filter/",
+        data: form.serialize()
+    }).done(function (data) {
+        datatableApi.clear().rows.add(data).draw();
+    });
 }

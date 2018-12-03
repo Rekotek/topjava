@@ -17,8 +17,9 @@
         <div class="row col-md-6">
             <form id="filterForm"
                   class="border border-secondary p-md-2 mb-md-2"
-                  method="post"
-                  action="meals/filter">
+                  <%--method="post"--%>
+                  <%--action="meals/filter"--%>
+            >
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="startDate"><spring:message code="meal.startDate"/>:</label>
@@ -55,7 +56,11 @@
                                value="${param.endTime}">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-secondary"><spring:message code="meal.filter"/></button>
+                <button type="button"
+                        class="btn btn-secondary"
+                        onclick="applyFilter()">
+                    <spring:message code="meal.filter"/>
+                </button>
                 <button type="button"
                         id="resetBtn"
                         class="btn btn-outline-secondary float-right"

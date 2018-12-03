@@ -7,7 +7,9 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -31,11 +33,22 @@ public class MealAjaxController extends AbstractMealController {
     }
 
     @PostMapping
-    public void create(@RequestParam("dateTime") @DateTimeFormat(iso= DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
+    public void create(@RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
                        @RequestParam("description") String description,
                        @RequestParam("calories") int calories) {
         Meal meal = new Meal(dateTime, description, calories);
         super.create(meal);
+    }
+
+    @Override
+    @GetMapping("/filter")
+    public List<MealTo> getBetween(@RequestParam(value = "startDate", required = false)
+                                           LocalDate startDate,
+                                   @RequestParam(value = "startTime", required = false)
+                                           LocalTime startTime,
+                                   @RequestParam(value = "endDate", required = false) LocalDate endDate,
+                                   @RequestParam(value = "endTime", required = false) LocalTime endTime) {
+        return super.getBetween(startDate, startTime, endDate, endTime);
     }
 
     @GetMapping("/defaultcalories")
