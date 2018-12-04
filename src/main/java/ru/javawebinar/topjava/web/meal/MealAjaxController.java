@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,9 +14,9 @@ import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping(value = MealAjaxController.REST_URL, produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = MealAjaxController.AJAX_URL, produces = APPLICATION_JSON_VALUE)
 public class MealAjaxController extends AbstractMealController {
-    static final String REST_URL = "/ajax/meals";
+    static final String AJAX_URL = "/ajax/meals";
 
     @Override
     @GetMapping

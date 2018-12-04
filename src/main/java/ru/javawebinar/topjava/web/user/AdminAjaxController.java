@@ -9,9 +9,9 @@ import ru.javawebinar.topjava.model.User;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = AdminAjaxController.REST_URL)
+@RequestMapping(value = AdminAjaxController.AJAX_URL)
 public class AdminAjaxController extends AbstractUserController {
-    static final String REST_URL = "/ajax/admin/users/";
+    static final String AJAX_URL = "/ajax/admin/users/";
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

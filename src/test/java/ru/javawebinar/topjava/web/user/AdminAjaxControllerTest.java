@@ -2,9 +2,7 @@ package ru.javawebinar.topjava.web.user;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.service.AbstractUserServiceTest;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 
@@ -12,11 +10,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javawebinar.topjava.UserTestData.NON_EXISTING_USER_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 class AdminAjaxControllerTest extends AbstractControllerTest {
-    private static final String AJAX_URL = AdminAjaxController.REST_URL;
+    private static final String AJAX_URL = AdminAjaxController.AJAX_URL;
 
     @Autowired
     private UserService userService;
