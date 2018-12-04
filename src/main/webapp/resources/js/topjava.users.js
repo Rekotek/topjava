@@ -41,6 +41,13 @@ $(function () {
     makeEditable();
 });
 
+
+function updateTable() {
+    $.get(ajaxUrl, function (data) {
+        applyDataToTable(data);
+    });
+}
+
 function changeEnableFlag(id, checkBox) {
     const checked = checkBox.is(':checked');
     $.ajax({
