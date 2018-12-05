@@ -39,17 +39,12 @@ function resetFilter() {
     updateTable();
 }
 
-let defaultCalories;
-$.get(ajaxUrl + "defaultcalories", function (data) {
-    defaultCalories = data;
-});
-
 function addMeal() {
     add();
     let iso_date = convertToISODateTime(new Date());
     $("#dateTime").val(iso_date);
     $("#description").val("Прием пищи");
-    $("#calories").val(defaultCalories);
+    $("#calories").val(1000);
 }
 
 function updateTable() {

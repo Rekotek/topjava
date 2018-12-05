@@ -55,10 +55,12 @@ function changeEnableFlag(id, checkBox) {
         url: ajaxUrl + id + '/enabled',
         data: {"flag": checked}
     }).done(function () {
-        updateTable();
+        // updateTable();
+        $(checkBox).closest("tr").attr("data-userenabled", checked);
         const notyStr = (checked) ? "Enabled" : "Disabled";
         successNoty(notyStr);
     }).fail(function () {
         checkBox.prop("checked", !checked);
+
     });
 }

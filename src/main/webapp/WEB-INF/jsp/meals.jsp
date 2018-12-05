@@ -16,10 +16,7 @@
 
         <div class="row col-md-6">
             <form id="filterForm"
-                  class="border border-secondary p-md-2 mb-md-2"
-                  <%--method="post"--%>
-                  <%--action="meals/filter"--%>
-            >
+                  class="border border-secondary p-md-2 mb-md-2">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="startDate"><spring:message code="meal.startDate"/>:</label>

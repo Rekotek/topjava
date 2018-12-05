@@ -49,10 +49,4 @@ public class MealAjaxController extends AbstractMealController {
                                    @RequestParam(value = "endTime", required = false) LocalTime endTime) {
         return super.getBetween(startDate, startTime, endDate, endTime);
     }
-
-    @GetMapping("/defaultcalories")
-    public int getDefaultCalories() {
-        // Magic number such as at the corresponding JSP
-        return 1000;
-    }
 }
