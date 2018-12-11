@@ -19,19 +19,19 @@
                     <div class="row">
                         <div class="col-3">
                             <label for="startDate"><spring:message code="meal.startDate"/></label>
-                            <input class="form-control" type="date" name="startDate" id="startDate">
+                            <input class="form-control" type="text" name="startDate" id="startDate">
                         </div>
                         <div class="col-3">
                             <label for="endDate"><spring:message code="meal.endDate"/></label>
-                            <input class="form-control" type="date" name="endDate" id="endDate">
+                            <input class="form-control" type="text" name="endDate" id="endDate">
                         </div>
                         <div class="offset-2 col-2">
                             <label for="startTime"><spring:message code="meal.startTime"/></label>
-                            <input class="form-control" type="time" name="startTime" id="startTime">
+                            <input class="form-control" type="text" name="startTime" id="startTime">
                         </div>
                         <div class="col-2">
                             <label for="endTime"><spring:message code="meal.endTime"/></label>
-                            <input class="form-control" type="time" name="endTime" id="endTime">
+                            <input class="form-control" type="text" name="endTime" id="endTime">
                         </div>
                     </div>
                 </form>
@@ -79,7 +79,7 @@
 
                     <div class="form-group">
                         <label for="dateTime" class="col-form-label"><spring:message code="meal.dateTime"/></label>
-                        <input type="datetime-local" class="form-control" id="dateTime" name="dateTime"
+                        <input type="text" class="form-control" id="dateTime" name="dateTime"
                                placeholder="<spring:message code="meal.dateTime"/>">
                     </div>
 
@@ -109,8 +109,12 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="resources/js/topjava.meals-dtpicker.js" defer></script>
+
 <jsp:include page="fragments/footer.jsp"/>
 </body>
+<jsp:include page="fragments/dtpicker-footer.jsp" />
+
 <c:set var="addTitle"><spring:message code='meal.add'/></c:set>
 <c:set var="editTitle"><spring:message code='meal.edit'/></c:set>
 <jsp:include page="fragments/i18n.jsp">
