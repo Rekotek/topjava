@@ -113,3 +113,19 @@ function renderDeleteBtn(data, type, row) {
         return "<a onclick='deleteRow(" + row.id + ");'><span class='fa fa-remove'></span></a>";
     }
 }
+
+function checkEmail() {
+    let newEmail = $("#email")[0].value;
+    let id = $("#id")[0].value;
+    $.post("ajax/check_mail/", {email: newEmail, id: id},
+        function (data) {
+            closeNoty();
+            if (data) {
+                failedNote = new Noty({
+                    text: "<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;" + i18n["validator.emailDuplication"],
+                    type: "error",
+                    layout: "topCenter"
+                }).show();
+            }
+        });
+}

@@ -27,5 +27,5 @@ public interface UserService {
 
     User getWithMeals(int id);
 
-    boolean checkUserWithEmailExists(String email, int id);
+    boolean checkUserWithEmailExists(String email, Integer id);
 }

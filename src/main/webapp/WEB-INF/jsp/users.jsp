@@ -53,7 +53,8 @@
                     <div class="form-group">
                         <label for="email" class="col-form-label"><spring:message code="user.email"/></label>
                         <input type="email" class="form-control" id="email" name="email"
-                               placeholder="<spring:message code="user.email"/>">
+                               placeholder="<spring:message code="user.email"/>"
+                               onblur="checkEmail()">
                     </div>
 
                     <div class="form-group">

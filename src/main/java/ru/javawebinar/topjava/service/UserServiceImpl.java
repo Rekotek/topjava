@@ -104,8 +104,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public boolean checkUserWithEmailExists(String email, int id) {
-        if (id == 0) {
+    public boolean checkUserWithEmailExists(String email, Integer id) {
+        if (id == null) {
             return repository.checkUserWithEmailExists(email);
         } else {
             return repository.checkUserWithEmailExistsWhenUpdate(email, id);
