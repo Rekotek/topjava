@@ -10,7 +10,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,13 +60,6 @@ public class ExceptionInfoHandler {
         return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }
 
-    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY) // 422
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorInfo validationError(HttpServletRequest req, MethodArgumentNotValidException e) {
-        processLogging(req, ValidationUtil.getRootCause(e), VALIDATION_ERROR, false);
-        return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, ValidationUtil.extractErrorMessages(e.getBindingResult()));
-    }
-
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
     @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
     public ErrorInfo illegalRequestDataError(HttpServletRequest req, Exception e) {
@@ -77,6 +70,13 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(Exception.class)
     public ErrorInfo handleError(HttpServletRequest req, Exception e) {
         return logAndGetErrorInfo(req, e, true, APP_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(BindException.class)
+    public ErrorInfo validationError(HttpServletRequest req, BindException e) {
+        processLogging(req, ValidationUtil.getRootCause(e), VALIDATION_ERROR, false);
+        return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, ValidationUtil.extractErrorMessages(e.getBindingResult()));
     }
 
     //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
