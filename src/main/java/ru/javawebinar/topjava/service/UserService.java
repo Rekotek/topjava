@@ -26,4 +26,6 @@ public interface UserService {
     void enable(int id, boolean enable);
 
     User getWithMeals(int id);
+
+    boolean checkUserWithEmailExists(String email, int id);
 }

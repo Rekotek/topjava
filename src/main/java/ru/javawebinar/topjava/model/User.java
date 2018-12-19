@@ -21,6 +21,8 @@ import static ru.javawebinar.topjava.util.UserUtil.DEFAULT_CALORIES_PER_DAY;
         @NamedQuery(name = User.DELETE, query = "DELETE FROM User u WHERE u.id=:id"),
         @NamedQuery(name = User.BY_EMAIL, query = "SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email=?1"),
         @NamedQuery(name = User.ALL_SORTED, query = "SELECT u FROM User u ORDER BY u.name, u.email"),
+        @NamedQuery(name = User.EXISTS_EMAIL, query = "SELECT count(*) > 0 FROM User u WHERE LOWER(u.email) = LOWER(?1)"),
+        @NamedQuery(name = User.EXISTS_EMAIL_WHEN_UPDATE, query = "SELECT count(*) > 0 FROM User u WHERE (LOWER(u.email) = LOWER(?1)) AND (u.id <> ?2)"),
 })
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email", name = "users_unique_email_idx")})
@@ -29,6 +31,8 @@ public class User extends AbstractNamedEntity {
     public static final String DELETE = "User.delete";
     public static final String BY_EMAIL = "User.getByEmail";
     public static final String ALL_SORTED = "User.getAllSorted";
+    public static final String EXISTS_EMAIL = "User.existsByEmail";
+    public static final String EXISTS_EMAIL_WHEN_UPDATE = "User.existsByEmailWhenUpdate";
 
     @Column(name = "email", nullable = false, unique = true)
     @Email

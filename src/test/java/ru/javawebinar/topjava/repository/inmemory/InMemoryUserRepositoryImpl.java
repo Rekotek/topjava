@@ -64,4 +64,15 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
                 .findFirst()
                 .orElse(null);
     }
+
+    @Override
+    public boolean checkUserWithEmailExists(String email) {
+        return getByEmail(email) != null;
+    }
+
+    @Override
+    public boolean checkUserWithEmailExistsWhenUpdate(String email, int id) {
+        User user = getByEmail(email);
+        return (user != null) && (user.getId() != id);
+    }
 }

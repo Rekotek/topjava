@@ -116,4 +116,20 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         }
         return u;
     }
+
+    @Override
+    public boolean checkUserWithEmailExists(String email) {
+        int count = jdbcTemplate.queryForObject("SELECT count(*) FROM users WHERE LOWER(email) = ?",
+                new Object[] { email.toLowerCase() },
+                Integer.class);
+        return count != 0;
+    }
+
+    @Override
+    public boolean checkUserWithEmailExistsWhenUpdate(String email, int id) {
+        int count = jdbcTemplate.queryForObject("SELECT count(*) FROM users WHERE LOWER(email) = ? AND ID <> ?",
+                new Object[] { email.toLowerCase(), id },
+                Integer.class);
+        return count != 0;
+    }
 }

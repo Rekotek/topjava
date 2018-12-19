@@ -89,10 +89,73 @@ class AdminRestControllerTest extends AbstractControllerTest {
         mockMvc.perform(put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(updated)))
+                .content(JsonUtil.writeAdditionProps(updated, "password", updated.getPassword())))
                 .andExpect(status().isNoContent());
 
         assertMatch(userService.get(USER_ID), updated);
+    }
+
+    @Test
+    void testValidateErrorNoNameOnUpdate() throws Exception {
+        User oldUser = new User(USER);
+        User updated = new User(USER);
+        updated.setName("");
+        updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
+        ResultActions resultActions = mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeAdditionProps(updated, "password", updated.getPassword())))
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
+        assertMatch(userService.get(USER_ID), oldUser);
+    }
+
+
+    @Test
+    void testValidateErrorNoEmailOnUpdate() throws Exception {
+        User oldUser = new User(USER);
+        User updated = new User(USER);
+        updated.setEmail("");
+        updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
+        ResultActions resultActions = mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeAdditionProps(updated, "password", updated.getPassword())))
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
+        assertMatch(userService.get(USER_ID), oldUser);
+    }
+
+    @Test
+    void testValidateDuplicationEmailOnUpdate() throws Exception {
+        User oldUser = new User(USER);
+        User updated = new User(USER);
+        updated.setEmail(ADMIN.getEmail());
+
+        ResultActions resultActions = mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeAdditionProps(updated, "password", updated.getPassword())))
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
+        assertMatch(userService.get(USER_ID), oldUser);
+
+    }
+
+    @Test
+    void testValidateDuplicationSelfEmailOnNew() throws Exception {
+        User createdUser = new User(null, "New", USER.getEmail(), "123456", 2300, Role.ROLE_USER);
+
+        ResultActions resultActions = mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeAdditionProps(createdUser, "password", createdUser.getPassword())))
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
     }
 
     @Test

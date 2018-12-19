@@ -102,4 +102,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User getWithMeals(int id) {
         return checkNotFoundWithId(repository.getWithMeals(id), id);
     }
+
+    @Override
+    public boolean checkUserWithEmailExists(String email, int id) {
+        if (id == 0) {
+            return repository.checkUserWithEmailExists(email);
+        } else {
+            return repository.checkUserWithEmailExistsWhenUpdate(email, id);
+        }
+    }
 }

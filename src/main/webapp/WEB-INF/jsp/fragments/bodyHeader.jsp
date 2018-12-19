@@ -26,5 +26,14 @@
                 </button>
             </form:form>
         </sec:authorize>
+        <!-- Dropdown for language -->
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><spring:message code="app.langTitle"/></button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="${requestScope['javax.servlet.forward.request_uri']}?lang=en"><spring:message code="app.langEn"/></a>
+                <a class="dropdown-item" href="${requestScope['javax.servlet.forward.request_uri']}?lang=ru"><spring:message code="app.langRu"/></a>
+            </div>
+        </div>
     </div>
 </nav>

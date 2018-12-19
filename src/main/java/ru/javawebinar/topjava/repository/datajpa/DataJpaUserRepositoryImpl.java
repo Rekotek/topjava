@@ -44,4 +44,14 @@ public class DataJpaUserRepositoryImpl implements UserRepository {
     public User getWithMeals(int id) {
         return crudRepository.getWithMeals(id);
     }
+
+    @Override
+    public boolean checkUserWithEmailExists(String email) {
+        return crudRepository.existsByEmailIgnoreCase(email);
+    }
+
+    @Override
+    public boolean checkUserWithEmailExistsWhenUpdate(String email, int id) {
+        return crudRepository.existsByEmailIgnoreCaseAndIdIsNot(email, id);
+    }
 }

@@ -71,4 +71,19 @@ public class JpaUserRepositoryImpl implements UserRepository {
     public List<User> getAll() {
         return em.createNamedQuery(User.ALL_SORTED, User.class).getResultList();
     }
+
+    @Override
+    public boolean checkUserWithEmailExists(String email) {
+        return em.createNamedQuery(User.EXISTS_EMAIL, Boolean.class)
+                .setParameter(1, email)
+                .getSingleResult();
+    }
+
+    @Override
+    public boolean checkUserWithEmailExistsWhenUpdate(String email, int id) {
+        return em.createNamedQuery(User.EXISTS_EMAIL_WHEN_UPDATE, Boolean.class)
+                .setParameter(1, email)
+                .setParameter(2, id)
+                .getSingleResult();
+    }
 }

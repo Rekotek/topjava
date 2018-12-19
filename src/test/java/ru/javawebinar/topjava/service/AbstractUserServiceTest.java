@@ -96,4 +96,46 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         service.enable(USER_ID, true);
         assertTrue(service.get(USER_ID).isEnabled());
     }
+
+    @Test
+    void checkExistsUserWithSameEmailOnNew() {
+        boolean emailExists = service.checkUserWithEmailExists(USER.getEmail(), 0);
+        assertTrue(emailExists);
+    }
+
+    @Test
+    void checkExistsUserWithSameEmailDifferCaseOnNew() {
+        boolean emailExists = service.checkUserWithEmailExists(USER.getEmail().toUpperCase(), 0);
+        assertTrue(emailExists);
+    }
+
+    @Test
+    void checkNonExistsUserWithOtherEmailOnNew() {
+        boolean emailExists = service.checkUserWithEmailExists(USER.getEmail() + ".com", 0);
+        assertFalse(emailExists);
+    }
+
+    @Test
+    void checkNonExistsOtherUserWithSelfEmailOnUpdate() {
+        boolean emailExists = service.checkUserWithEmailExists(USER.getEmail(), USER_ID);
+        assertFalse(emailExists);
+    }
+
+    @Test
+    void checkNonExistsOtherUserWithSelfEmailDifferCaseOnUpdate() {
+        boolean emailExists = service.checkUserWithEmailExists(USER.getEmail().toUpperCase(), USER_ID);
+        assertFalse(emailExists);
+    }
+
+    @Test
+    void checkNonExistsUserWithOtherEmailOnUpdate() {
+        boolean emailExists = service.checkUserWithEmailExists(USER.getEmail() + ".com", USER_ID);
+        assertFalse(emailExists);
+    }
+
+    @Test
+    void checkExistsUserWithExistingEmailOnUpdate() {
+        boolean emailExists = service.checkUserWithEmailExists(ADMIN.getEmail(), USER_ID);
+        assertTrue(emailExists);
+    }
 }

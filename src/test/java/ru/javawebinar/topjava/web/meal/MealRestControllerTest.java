@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.TestUtil.*;
 import static ru.javawebinar.topjava.UserTestData.*;
@@ -81,6 +82,58 @@ class MealRestControllerTest extends AbstractControllerTest {
         assertMatch(service.get(MEAL1_ID, START_SEQ), updated);
     }
 
+
+    @Test
+    void testValidErrorCaloriesOnUpdate() throws Exception {
+        Meal updated = getUpdated();
+        Meal oldMeal = service.get(MEAL1_ID, START_SEQ);
+
+        updated.setCalories(0);
+
+        ResultActions resultActions = mockMvc.perform(put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated))
+                .with(userHttpBasic(USER)))
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
+        assertMatch(service.get(MEAL1_ID, START_SEQ), oldMeal);
+    }
+
+    @Test
+    void testValidErrorDescOnUpdate() throws Exception {
+        Meal updated = getUpdated();
+        Meal oldMeal = service.get(MEAL1_ID, START_SEQ);
+
+        updated.setDescription("");
+
+        ResultActions resultActions = mockMvc.perform(put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated))
+                .with(userHttpBasic(USER)))
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
+        assertMatch(service.get(MEAL1_ID, START_SEQ), oldMeal);
+    }
+
+    @Test
+    void testValidErrorDateTimeOnUpdate() throws Exception {
+        Meal updated = getUpdated();
+        Meal oldMeal = service.get(MEAL1_ID, START_SEQ);
+
+        updated.setDateTime(null);
+
+        ResultActions resultActions = mockMvc.perform(put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated))
+                .with(userHttpBasic(USER)))
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
+        assertMatch(service.get(MEAL1_ID, START_SEQ), oldMeal);
+    }
+
     @Test
     void testCreate() throws Exception {
         Meal created = getCreated();
@@ -94,6 +147,45 @@ class MealRestControllerTest extends AbstractControllerTest {
 
         assertMatch(returned, created);
         assertMatch(service.getAll(ADMIN_ID), ADMIN_MEAL2, created, ADMIN_MEAL1);
+    }
+
+    @Test
+    void testValidateNoCaloriesOnCreate() throws Exception {
+        Meal created = getCreated();
+        created.setCalories(null);
+        ResultActions resultActions = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(created))
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
+    }
+
+    @Test
+    void testValidateNoDescOnCreate() throws Exception {
+        Meal created = getCreated();
+        created.setDescription("");
+        ResultActions resultActions = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(created))
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
+    }
+
+    @Test
+    void testValidateNoDateTimeOnCreate() throws Exception {
+        Meal created = getCreated();
+        created.setDateTime(null);
+        ResultActions resultActions = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(created))
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
     }
 
     @Test

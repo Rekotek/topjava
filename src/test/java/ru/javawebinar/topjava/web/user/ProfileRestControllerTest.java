@@ -14,7 +14,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javawebinar.topjava.TestUtil.*;
+import static ru.javawebinar.topjava.TestUtil.readFromJsonResultActions;
+import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.web.user.ProfileRestController.REST_URL;
 
@@ -63,6 +64,18 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testRegisterValidateDuplicateEmail() throws Exception {
+        UserTo createdTo = new UserTo(null, "newName", USER.getEmail(), "newPassword", 1500);
+
+        ResultActions resultActions = mockMvc.perform(post(REST_URL + "/register").contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(createdTo)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
+    }
+
+    @Test
     void testUpdate() throws Exception {
         UserTo updatedTo = new UserTo(null, "newName", "newemail@ya.ru", "newPassword", 1500);
 
@@ -74,4 +87,18 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
         assertMatch(userService.getByEmail("newemail@ya.ru"), UserUtil.updateFromTo(new User(USER), updatedTo));
     }
+
+    @Test
+    void testUpdateValidateDuplicateEmail() throws Exception {
+        UserTo updatedTo = new UserTo(null, "newName", ADMIN.getEmail(), "newPassword", 1500);
+
+        ResultActions resultActions = mockMvc.perform(put(REST_URL).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(USER))
+                .content(JsonUtil.writeValue(updatedTo)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+
+        assertErrorInfoResponse(resultActions);
+    }
+
 }
