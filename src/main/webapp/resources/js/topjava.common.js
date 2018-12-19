@@ -121,11 +121,18 @@ function checkEmail() {
         function (data) {
             closeNoty();
             if (data) {
+                const cancelPressed = $('#button-cancel').is(':focus') || $('#button-x-cancel').is(':focus');
+                if (cancelPressed) {
+                    return;
+                }
+                $('#button-submit').prop('disabled', true);
                 failedNote = new Noty({
                     text: "<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;" + i18n["validator.emailDuplication"],
                     type: "error",
                     layout: "topCenter"
                 }).show();
+            } else {
+                $('#button-submit').prop('disabled', false);
             }
         });
 }
