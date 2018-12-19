@@ -2,6 +2,9 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.util.exception.ErrorType;
@@ -27,6 +31,9 @@ import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)
 public class ExceptionInfoHandler {
     private static Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
+
+    @Autowired
+    private MessageSource messageSource;
 
     private static void processLogging(HttpServletRequest req, Throwable rootCause, ErrorType errorType, boolean logAsError) {
         if (logAsError) {
@@ -46,6 +53,10 @@ public class ExceptionInfoHandler {
     @ResponseStatus(value = HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
+        if (e.getMessage().contains(Meal.UNIQUE_USER_DATETIME)) {
+            log.error("The record with given DateTime already exists at request {}", req.getRequestURL());
+            return new ErrorInfo(req.getRequestURL(), DATA_ERROR, messageSource.getMessage("validator.dateTimeExists", null, LocaleContextHolder.getLocale()));
+        }
         return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }
 
