@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.TestUtil.*;
 import static ru.javawebinar.topjava.UserTestData.*;
@@ -37,7 +38,6 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(result -> assertMatch(readFromJsonMvcResult(result, Meal.class), ADMIN_MEAL1));
     }
-
 
     @Test
     void testGetUnauth() throws Exception {
